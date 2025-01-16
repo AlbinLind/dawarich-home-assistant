@@ -57,8 +57,8 @@ class DawarichDeviceTracker(TrackerEntity):
         self._location_accuracy = 2
 
         self._api = api
-
         self._hass = hass
+
         self._async_unsubscribe_state_changed = async_track_state_change_event(
             hass=self._hass,
             entity_ids=[self._mobile_app],
@@ -101,12 +101,24 @@ class DawarichDeviceTracker(TrackerEntity):
         if (new_state := event.data.get("new_state")) is None:
             _LOGGER.error("No new state found for %s", self._mobile_app)
             return
+        
         new_data = new_state.attributes
-        # We send the location to the Dawarich API
+        
+        # Update internal state with new attributes
+        self._location_name = new_data.get("location_name", "Home")
+        self._latitude = new_data.get("latitude", 0.0)
+        self._longitude = new_data.get("longitude", 0.0)
+        self._location_accuracy = new_data.get("gps_accuracy", 2)
+
+        # Send to Dawarich API
         response = await self._api.add_one_point(
-            latitude=new_data["latitude"],
-            longitude=new_data["longitude"],
             name=self._friendly_name,
+            latitude=self._latitude,
+            longitude=self._longitude,
+            horizontal_accuracy=self._location_accuracy,
+            altitude=new_data.get("altitude", 0),
+            vertical_accuracy=new_data.get("vertical_accuracy", 0),
+            speed= new_data.get("speed", 0)
         )
         if response.success:
             _LOGGER.debug("Location sent to Dawarich API")
