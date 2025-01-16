@@ -91,6 +91,18 @@ class DawarichDeviceTracker(TrackerEntity):
         """Return the location accuracy of the device."""
         return self._location_accuracy
 
+    def _are_valid_coordinates(self, latitude: float | None, longitude: float | None) -> bool:
+        """Check if the coordinates are valid."""
+        _LOGGER.debug("Checking validity of coordinates: %s, %s", latitude, longitude)
+        if latitude is None or longitude is None:
+            _LOGGER.debug("Coordinates are None")
+            return False
+        if latitude < -90 or latitude > 90 or longitude < -180 or longitude > 180:
+            _LOGGER.debug("Coordinates are out of range")
+            return False
+        _LOGGER.debug("Coordinates are valid")
+        return True
+
     async def _get_state_change(
         self, event: Event[EventStateChangedData], *args, **kwargs
     ):
@@ -102,23 +114,40 @@ class DawarichDeviceTracker(TrackerEntity):
             _LOGGER.error("No new state found for %s", self._mobile_app)
             return
         
+        # Log received data
         new_data = new_state.attributes
+        _LOGGER.debug("Received data: %s", new_data)
         
-        # Update internal state with new attributes
-        self._location_name = new_data.get("location_name", "Home")
-        self._latitude = new_data.get("latitude", 0.0)
-        self._longitude = new_data.get("longitude", 0.0)
-        self._location_accuracy = new_data.get("gps_accuracy", 2)
+        # Get coordinates from new_data
+        latitude = new_data.get("latitude")
+        longitude = new_data.get("longitude")
+        
+        # Check if coordinates are valid
+        if not self._are_valid_coordinates(latitude, longitude):
+            _LOGGER.debug("Coordinates are not valid, skipping update")
+            return
+
+        # Only include optional parameters if they have valid values
+        optional_params = {}
+    
+        if (gps_accuracy := new_data.get("gps_accuracy")) is not None:
+            optional_params["horizontal_accuracy"] = gps_accuracy
+            
+        if (altitude := new_data.get("altitude")) is not None:
+            optional_params["altitude"] = altitude
+            
+        if (vertical_accuracy := new_data.get("vertical_accuracy")) is not None:
+            optional_params["vertical_accuracy"] = vertical_accuracy
+            
+        if (speed := new_data.get("speed")) is not None:
+            optional_params["speed"] = speed
 
         # Send to Dawarich API
         response = await self._api.add_one_point(
             name=self._friendly_name,
-            latitude=self._latitude,
-            longitude=self._longitude,
-            horizontal_accuracy=self._location_accuracy,
-            altitude=new_data.get("altitude", 0),
-            vertical_accuracy=new_data.get("vertical_accuracy", 0),
-            speed= new_data.get("speed", 0)
+            latitude=latitude,
+            longitude=longitude,
+            **optional_params
         )
         if response.success:
             _LOGGER.debug("Location sent to Dawarich API")
