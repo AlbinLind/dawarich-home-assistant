@@ -39,7 +39,7 @@
         "name": "Total Reverse Geocoded",
         "unit_of_measurement": "points"
       },
-      "total_countries_visied": {
+      "total_countries_visited": {
         "name": "Total Countries Visited",
         "unit_of_measurement": "countries"
       },
