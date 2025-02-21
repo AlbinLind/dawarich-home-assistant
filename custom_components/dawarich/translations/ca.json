@@ -39,7 +39,7 @@
         "name": "Total Geolocalitzats Inversament",
         "unit_of_measurement": "punts"
       },
-      "total_countries_visied": {
+      "total_countries_visited": {
         "name": "Total de Països Visitats",
         "unit_of_measurement": "països"
       },

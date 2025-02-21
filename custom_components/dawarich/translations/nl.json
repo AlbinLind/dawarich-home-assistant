@@ -39,7 +39,7 @@
         "name": "Totaal Omgekeerde Geocodeerd",
         "unit_of_measurement": "punten"
       },
-      "total_countries_visied": {
+      "total_countries_visited": {
         "name": "Totaal Landen Bezocht",
         "unit_of_measurement": "landen"
       },
