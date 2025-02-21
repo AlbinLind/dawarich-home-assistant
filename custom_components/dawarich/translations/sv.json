@@ -40,7 +40,7 @@
         "name": "Omvänd geokodade punkter",
         "unit_of_measurement": "punkter"
       },
-      "total_countries_visied": {
+      "total_countries_visited": {
         "name": "Besökta länder",
         "unit_of_measurement": "länder"
       },
