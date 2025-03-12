@@ -45,8 +45,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: DawarichConfigEntry) -> 
     host = entry.data[CONF_HOST]
     api_key = entry.data[CONF_API_KEY]
     use_ssl = entry.data[CONF_SSL]
+    verify_ssl = entry.data[CONF_VERIFY_SSL]
 
-    api = get_api(host, api_key, use_ssl)
+    api = get_api(host, api_key, use_ssl, verify_ssl)
 
     coordinator = DawarichCoordinator(hass, api)
     await coordinator.async_config_entry_first_refresh()
