@@ -169,8 +169,9 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         host = self._config[CONF_HOST]
         use_ssl = self._config[CONF_SSL]
         api_key = self._config[CONF_API_KEY]
+        verify_ssl = self._config[CONF_VERIFY_SSL]
 
-        api = get_api(host, api_key, use_ssl)
+        api = get_api(host, api_key, use_ssl, verify_ssl)
 
         # TODO: We should do a health check to see if the API is reachable
         # that way we can display if it is a connection issue or an invalid API key
