@@ -12,6 +12,7 @@ from homeassistant.const import (
     CONF_PORT,
     CONF_SSL,
     CONF_VERIFY_SSL,
+    MAJOR_VERSION,
     Platform,
 )
 from homeassistant.core import HomeAssistant
@@ -20,7 +21,7 @@ from .const import CONF_DEVICE, DOMAIN
 from .coordinator import DawarichCoordinator
 from .helpers import get_api
 
-VERSION = "0.3.2"
+VERSION = "0.7.0"
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 
@@ -49,6 +50,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: DawarichConfigEntry) -> 
 
     api = get_api(host, api_key, use_ssl, verify_ssl)
 
+    if MAJOR_VERSION < 2025:
+        _LOGGER.warning(
+            "You are using a deprecated version of home assistant for Dawarich. In version 0.8.0 of"
+            " dawarich-home-assistantyou will need at least Home Assistant Core version 2025.1"
+        )
+    
     coordinator = DawarichCoordinator(hass, api)
     await coordinator.async_config_entry_first_refresh()
 

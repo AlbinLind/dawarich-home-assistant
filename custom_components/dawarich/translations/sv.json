@@ -37,7 +37,7 @@
         "unit_of_measurement": "punkter"
       },
       "total_reverse_geocoded_points": {
-        "name": "Omvänd geokodade punkter",
+        "name": "Omvändgeokodade punkter",
         "unit_of_measurement": "punkter"
       },
       "total_countries_visited": {
@@ -53,7 +53,7 @@
         "state": {
           "unknown": "Okänd",
           "success": "Lyckades",
-          "error": "Fel"
+          "error": "Misslyckades"
         }
       }
     }
