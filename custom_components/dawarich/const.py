@@ -12,6 +12,7 @@ DEFAULT_SSL = False
 DEFAULT_VERIFY_SSL = True
 CONF_DEVICE = "mobile_app"
 UPDATE_INTERVAL = timedelta(seconds=60)
+VERSION_UPDATE_INTERVAL = timedelta(hours=1)
 
 
 class DawarichTrackerStates(Enum):
