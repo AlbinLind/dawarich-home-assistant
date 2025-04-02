@@ -27,7 +27,12 @@ class DawarichCoordinator(DataUpdateCoordinator):
         response = await self.api.get_stats()
         match response.response_code:
             case 200:
-                return response.response.model_dump()  # type: ignore[unknown-attr]
+                if response.response is None:
+                    _LOGGER.error(
+                        "Dawarich API returned no data but returned status 200"
+                    )
+                    raise UpdateFailed("Dawarich API returned no data")
+                return response.response.model_dump()
             case 401:
                 _LOGGER.error(
                     "Invalid credentials when trying to fetch stats from Dawarich"
