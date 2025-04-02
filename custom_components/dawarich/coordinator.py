@@ -47,3 +47,21 @@ class DawarichStatsCoordinator(DataUpdateCoordinator):
                 raise UpdateFailed from Warning(
                     f"Error fetching data from Dawarich (status {response.response_code})"
                 )
+
+
+class DawarichVersionCoordinator(DataUpdateCoordinator):
+    """Custom coordinator for Dawarich version."""
+
+    def __init__(self, hass: HomeAssistant, api: DawarichAPI):
+        """Initialize coordinator."""
+        super().__init__(
+            hass, _LOGGER, name="Dawarich Version", update_interval=UPDATE_INTERVAL
+        )
+        self.api = api
+
+    async def _async_update_data(self) -> dict[str, int]:
+        response = await self.api.health()
+        if response is None:
+            _LOGGER.error("Dawarich API returned no data")
+            raise UpdateFailed("Dawarich API returned no data")
+        return response.model_dump()
