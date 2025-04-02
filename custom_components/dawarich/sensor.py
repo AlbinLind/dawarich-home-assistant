@@ -22,7 +22,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from .const import CONF_DEVICE, DOMAIN, DawarichTrackerStates
-from .coordinator import DawarichStatsCoordinator
+from .coordinator import DawarichStatsCoordinator, DawarichVersionCoordinator
 
 if TYPE_CHECKING:
     from .config_flow import DawarichConfigFlow
@@ -71,6 +71,16 @@ TRACKER_SENSOR_TYPES = SensorEntityDescription(
     translation_key="last_update",
 )
 
+VERSION_SENSOR_TYPES = SensorEntityDescription(
+    key="version",
+    name="Dawarich Version",
+    translation_key="version",
+)
+
+type DawarichSensors = (
+    DawarichTrackerSensor | DawarichStatisticsSensor | DawarichVersionSensor
+)
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -90,11 +100,22 @@ async def async_setup_entry(
         configuration_url=entry.runtime_data.api.url,
     )
 
-    sensors: list[DawarichTrackerSensor | DawarichStatisticsSensor] = [
+    # Add statistics sensor
+    sensors: list[DawarichSensors] = [
         DawarichStatisticsSensor(url, api_key, name, desc, coordinator, device_info)
         for desc in SENSOR_TYPES
     ]
 
+    # Add version sensor
+    sensors.append(
+        DawarichVersionSensor(
+            coordinator=entry.runtime_data.version_coordinator,
+            description=VERSION_SENSOR_TYPES,
+            api_key=api_key,
+        )
+    )
+
+    # Add (optional) mobile app tracker sensor
     mobile_app = entry.data[CONF_DEVICE]
     if mobile_app is not None:
         _LOGGER.info("Adding tracker sensor for %s", mobile_app)
@@ -269,3 +290,25 @@ class DawarichStatisticsSensor(CoordinatorEntity, SensorEntity):  # type: ignore
             return f"{self._device_name} {self.entity_description.name.title()}"
         _LOGGER.error("Name is not a string for %s", self.entity_description.key)
         return f"{self._device_name}"
+
+
+class DawarichVersionSensor(CoordinatorEntity, SensorEntity):  # type: ignore[incompatible-subclass]
+    """Representation of a Dawarich version sensor."""
+
+    def __init__(
+        self,
+        coordinator: DawarichVersionCoordinator,
+        description: SensorEntityDescription,
+        api_key: str,
+    ):
+        """Initialize Dawarich version sensor."""
+        super().__init__(coordinator)
+        self.entity_description = description
+        self._attr_unique_id = f"{api_key}/{description.key}"
+
+    @property
+    def native_value(self) -> StateType:  # type: ignore[override]
+        """Return the state of the device."""
+        if self.coordinator.data is None:
+            return None
+        return self.coordinator.data[self.entity_description.key]
