@@ -13,7 +13,7 @@ from .const import UPDATE_INTERVAL
 _LOGGER = logging.getLogger(__name__)
 
 
-class DawarichCoordinator(DataUpdateCoordinator):
+class DawarichStatsCoordinator(DataUpdateCoordinator):
     """Custom coordinator."""
 
     def __init__(self, hass: HomeAssistant, api: DawarichAPI):
