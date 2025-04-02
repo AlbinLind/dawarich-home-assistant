@@ -311,4 +311,8 @@ class DawarichVersionSensor(CoordinatorEntity, SensorEntity):  # type: ignore[in
         """Return the state of the device."""
         if self.coordinator.data is None:
             return None
-        return self.coordinator.data[self.entity_description.key]
+        # Combine the version parts
+        major = self.coordinator.data["major"]
+        minor = self.coordinator.data["minor"]
+        patch = self.coordinator.data["patch"]
+        return f"{major}.{minor}.{patch}"
