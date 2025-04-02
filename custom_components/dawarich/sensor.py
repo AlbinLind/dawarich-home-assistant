@@ -112,6 +112,7 @@ async def async_setup_entry(
             coordinator=entry.runtime_data.version_coordinator,
             description=VERSION_SENSOR_TYPES,
             api_key=api_key,
+            device_info=device_info,
         )
     )
 
@@ -300,11 +301,13 @@ class DawarichVersionSensor(CoordinatorEntity, SensorEntity):  # type: ignore[in
         coordinator: DawarichVersionCoordinator,
         description: SensorEntityDescription,
         api_key: str,
+        device_info: DeviceInfo,
     ):
         """Initialize Dawarich version sensor."""
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{api_key}/{description.key}"
+        self._attr_device_info = device_info
 
     @property
     def native_value(self) -> StateType:  # type: ignore[override]
