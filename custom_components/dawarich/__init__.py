@@ -18,7 +18,7 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 
 from .const import CONF_DEVICE, DOMAIN
-from .coordinator import DawarichStatsCoordinator
+from .coordinator import DawarichStatsCoordinator, DawarichVersionCoordinator
 from .helpers import get_api
 
 VERSION = "0.7.0"
@@ -36,6 +36,7 @@ class DawarichConfigEntryData:
 
     api: DawarichAPI
     coordinator: DawarichStatsCoordinator
+    version_coordinator: DawarichVersionCoordinator
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: DawarichConfigEntry) -> bool:
@@ -55,11 +56,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: DawarichConfigEntry) -> 
             "You are using a deprecated version of home assistant for Dawarich. In version 0.8.0 of"
             " dawarich-home-assistantyou will need at least Home Assistant Core version 2025.1"
         )
-    
+
     coordinator = DawarichStatsCoordinator(hass, api)
     await coordinator.async_config_entry_first_refresh()
+    version_coordinator = DawarichVersionCoordinator(hass, api)
+    await version_coordinator.async_config_entry_first_refresh()
 
-    entry.runtime_data = DawarichConfigEntryData(api=api, coordinator=coordinator)
+    entry.runtime_data = DawarichConfigEntryData(
+        api=api, coordinator=coordinator, version_coordinator=version_coordinator
+    )
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
