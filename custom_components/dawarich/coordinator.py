@@ -8,7 +8,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import UPDATE_INTERVAL
+from .const import UPDATE_INTERVAL, VERSION_UPDATE_INTERVAL
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -55,7 +55,10 @@ class DawarichVersionCoordinator(DataUpdateCoordinator):
     def __init__(self, hass: HomeAssistant, api: DawarichAPI):
         """Initialize coordinator."""
         super().__init__(
-            hass, _LOGGER, name="Dawarich Version", update_interval=UPDATE_INTERVAL
+            hass,
+            _LOGGER,
+            name="Dawarich Version",
+            update_interval=VERSION_UPDATE_INTERVAL,
         )
         self.api = api
 
