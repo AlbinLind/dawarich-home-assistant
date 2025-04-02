@@ -22,7 +22,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from .const import CONF_DEVICE, DOMAIN, DawarichTrackerStates
-from .coordinator import DawarichCoordinator
+from .coordinator import DawarichStatsCoordinator
 
 if TYPE_CHECKING:
     from .config_flow import DawarichConfigFlow
@@ -235,7 +235,7 @@ class DawarichStatisticsSensor(CoordinatorEntity, SensorEntity):  # type: ignore
         api_key: str,
         device_name: str,
         description: SensorEntityDescription,
-        coordinator: DawarichCoordinator,
+        coordinator: DawarichStatsCoordinator,
         device_info: DeviceInfo,
     ):
         """Initialize Dawarich sensor."""

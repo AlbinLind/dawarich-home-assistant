@@ -18,7 +18,7 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 
 from .const import CONF_DEVICE, DOMAIN
-from .coordinator import DawarichCoordinator
+from .coordinator import DawarichStatsCoordinator
 from .helpers import get_api
 
 VERSION = "0.7.0"
@@ -35,7 +35,7 @@ class DawarichConfigEntryData:
     """Runtime data definitions."""
 
     api: DawarichAPI
-    coordinator: DawarichCoordinator
+    coordinator: DawarichStatsCoordinator
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: DawarichConfigEntry) -> bool:
@@ -56,7 +56,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: DawarichConfigEntry) -> 
             " dawarich-home-assistantyou will need at least Home Assistant Core version 2025.1"
         )
     
-    coordinator = DawarichCoordinator(hass, api)
+    coordinator = DawarichStatsCoordinator(hass, api)
     await coordinator.async_config_entry_first_refresh()
 
     entry.runtime_data = DawarichConfigEntryData(api=api, coordinator=coordinator)
