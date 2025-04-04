@@ -325,3 +325,7 @@ class DawarichVersionSensor(CoordinatorEntity[DawarichVersionCoordinator], Senso
         minor = self.coordinator.data["minor"]
         patch = self.coordinator.data["patch"]
         return f"{major}.{minor}.{patch}"
+    @cached_property
+    def icon(self) -> str:
+        """Return the icon to use in the frontend."""
+        return "mdi:information-outline"
