@@ -8,12 +8,12 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import UPDATE_INTERVAL
+from .const import UPDATE_INTERVAL, VERSION_UPDATE_INTERVAL
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class DawarichCoordinator(DataUpdateCoordinator):
+class DawarichStatsCoordinator(DataUpdateCoordinator):
     """Custom coordinator."""
 
     def __init__(self, hass: HomeAssistant, api: DawarichAPI):
@@ -47,3 +47,24 @@ class DawarichCoordinator(DataUpdateCoordinator):
                 raise UpdateFailed from Warning(
                     f"Error fetching data from Dawarich (status {response.response_code})"
                 )
+
+
+class DawarichVersionCoordinator(DataUpdateCoordinator):
+    """Custom coordinator for Dawarich version."""
+
+    def __init__(self, hass: HomeAssistant, api: DawarichAPI):
+        """Initialize coordinator."""
+        super().__init__(
+            hass,
+            _LOGGER,
+            name="Dawarich Version",
+            update_interval=VERSION_UPDATE_INTERVAL,
+        )
+        self.api = api
+
+    async def _async_update_data(self) -> dict[str, int]:
+        response = await self.api.health()
+        if response is None:
+            _LOGGER.error("Dawarich API returned no data")
+            raise UpdateFailed("Dawarich API returned no data")
+        return response.model_dump()

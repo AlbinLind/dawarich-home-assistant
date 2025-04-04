@@ -1,7 +1,7 @@
 """Show statistical data from your Dawarich instance."""
 
 import logging
-from typing import TYPE_CHECKING
+from functools import cached_property
 
 from dawarich_api import DawarichAPI
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
@@ -21,11 +21,10 @@ from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
 
-from .const import CONF_DEVICE, DOMAIN, DawarichTrackerStates
-from .coordinator import DawarichCoordinator
+from custom_components.dawarich import DawarichConfigEntry
 
-if TYPE_CHECKING:
-    from .config_flow import DawarichConfigFlow
+from .const import CONF_DEVICE, DOMAIN, DawarichTrackerStates
+from .coordinator import DawarichStatsCoordinator, DawarichVersionCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -71,10 +70,20 @@ TRACKER_SENSOR_TYPES = SensorEntityDescription(
     translation_key="last_update",
 )
 
+VERSION_SENSOR_TYPES = SensorEntityDescription(
+    key="version",
+    name="Dawarich Version",
+    translation_key="version",
+)
+
+type DawarichSensors = (
+    DawarichTrackerSensor | DawarichStatisticsSensor | DawarichVersionSensor
+)
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: "DawarichConfigFlow",
+    entry: DawarichConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up Dawarich sensor."""
@@ -90,11 +99,23 @@ async def async_setup_entry(
         configuration_url=entry.runtime_data.api.url,
     )
 
-    sensors: list[DawarichTrackerSensor | DawarichStatisticsSensor] = [
+    # Add statistics sensor
+    sensors: list[DawarichSensors] = [
         DawarichStatisticsSensor(url, api_key, name, desc, coordinator, device_info)
         for desc in SENSOR_TYPES
     ]
 
+    # Add version sensor
+    sensors.append(
+        DawarichVersionSensor(
+            coordinator=entry.runtime_data.version_coordinator,
+            description=VERSION_SENSOR_TYPES,
+            api_key=api_key,
+            device_info=device_info,
+        )
+    )
+
+    # Add (optional) mobile app tracker sensor
     mobile_app = entry.data[CONF_DEVICE]
     if mobile_app is not None:
         _LOGGER.info("Adding tracker sensor for %s", mobile_app)
@@ -147,13 +168,18 @@ class DawarichTrackerSensor(SensorEntity):
         self._state: DawarichTrackerStates = DawarichTrackerStates.UNKNOWN
         self._attr_options = [state.value for state in DawarichTrackerStates]
 
-    @property
+    @cached_property
     def unique_id(self) -> str:  # type: ignore[override]
         """Return a unique id for the sensor."""
         return f"{self._api_key}/tracker"
 
-    @property
-    def state(self) -> StateType:
+    @cached_property
+    def native_value(self) -> StateType:
+        """Return the state of the sensor."""
+        return self._state.value
+
+    @cached_property
+    def value(self) -> StateType:
         """Return the state of the sensor."""
         return self._state.value
 
@@ -235,7 +261,7 @@ class DawarichStatisticsSensor(CoordinatorEntity, SensorEntity):  # type: ignore
         api_key: str,
         device_name: str,
         description: SensorEntityDescription,
-        coordinator: DawarichCoordinator,
+        coordinator: DawarichStatsCoordinator,
         device_info: DeviceInfo,
     ):
         """Initialize Dawarich sensor."""
@@ -248,24 +274,59 @@ class DawarichStatisticsSensor(CoordinatorEntity, SensorEntity):  # type: ignore
         self._attr_device_info = device_info
         self._attr_state_class = SensorStateClass.TOTAL
 
-    @property
-    def native_value(self) -> StateType:  # type: ignore[override]
+    @cached_property
+    def native_value(self) -> StateType:
         """Return the state of the device."""
         if self.coordinator.data is None:
             return None
         return self.coordinator.data[self.entity_description.key]
 
-    @property
-    def icon(self) -> str:  # type: ignore[override]
+    @cached_property
+    def icon(self) -> str:
         """Return the icon to use in the frontend."""
         if self.entity_description.icon is not None:
             return self.entity_description.icon
         return "mdi:eye"
 
-    @property
-    def name(self) -> str:  # type: ignore[override]
+    @cached_property
+    def name(self) -> str:
         """Return the name of the sensor."""
         if isinstance(self.entity_description.name, str):
             return f"{self._device_name} {self.entity_description.name.title()}"
         _LOGGER.error("Name is not a string for %s", self.entity_description.key)
         return f"{self._device_name}"
+
+
+class DawarichVersionSensor(
+    CoordinatorEntity[DawarichVersionCoordinator], SensorEntity
+):  # type: ignore[incompatible-subclass]
+    """Representation of a Dawarich version sensor."""
+
+    def __init__(
+        self,
+        coordinator: DawarichVersionCoordinator,
+        description: SensorEntityDescription,
+        api_key: str,
+        device_info: DeviceInfo,
+    ):
+        """Initialize Dawarich version sensor."""
+        super().__init__(coordinator)
+        self.entity_description = description
+        self._attr_unique_id = f"{api_key}/{description.key}"
+        self._attr_device_info = device_info
+
+    @cached_property
+    def native_value(self) -> StateType:
+        """Return the state of the device."""
+        if self.coordinator.data is None:
+            return None
+        # Combine the version parts
+        major = self.coordinator.data["major"]
+        minor = self.coordinator.data["minor"]
+        patch = self.coordinator.data["patch"]
+        return f"{major}.{minor}.{patch}"
+
+    @cached_property
+    def icon(self) -> str:
+        """Return the icon to use in the frontend."""
+        return "mdi:information-outline"
