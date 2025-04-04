@@ -2,7 +2,6 @@
 
 import logging
 from functools import cached_property
-from typing import TYPE_CHECKING
 
 from dawarich_api import DawarichAPI
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
@@ -22,11 +21,10 @@ from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
 
+from custom_components.dawarich import DawarichConfigEntry
+
 from .const import CONF_DEVICE, DOMAIN, DawarichTrackerStates
 from .coordinator import DawarichStatsCoordinator, DawarichVersionCoordinator
-
-if TYPE_CHECKING:
-    from .config_flow import DawarichConfigFlow
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -85,7 +83,7 @@ type DawarichSensors = (
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: "DawarichConfigFlow",
+    entry: DawarichConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up Dawarich sensor."""
@@ -299,7 +297,9 @@ class DawarichStatisticsSensor(CoordinatorEntity, SensorEntity):  # type: ignore
         return f"{self._device_name}"
 
 
-class DawarichVersionSensor(CoordinatorEntity[DawarichVersionCoordinator], SensorEntity):  # type: ignore[incompatible-subclass]
+class DawarichVersionSensor(
+    CoordinatorEntity[DawarichVersionCoordinator], SensorEntity
+):  # type: ignore[incompatible-subclass]
     """Representation of a Dawarich version sensor."""
 
     def __init__(
@@ -325,6 +325,7 @@ class DawarichVersionSensor(CoordinatorEntity[DawarichVersionCoordinator], Senso
         minor = self.coordinator.data["minor"]
         patch = self.coordinator.data["patch"]
         return f"{major}.{minor}.{patch}"
+
     @cached_property
     def icon(self) -> str:
         """Return the icon to use in the frontend."""
