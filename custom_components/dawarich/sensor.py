@@ -293,7 +293,7 @@ class DawarichStatisticsSensor(CoordinatorEntity, SensorEntity):  # type: ignore
         return f"{self._device_name}"
 
 
-class DawarichVersionSensor(CoordinatorEntity, SensorEntity):  # type: ignore[incompatible-subclass]
+class DawarichVersionSensor(CoordinatorEntity[DawarichVersionCoordinator], SensorEntity):  # type: ignore[incompatible-subclass]
     """Representation of a Dawarich version sensor."""
 
     def __init__(
