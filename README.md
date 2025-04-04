@@ -7,7 +7,7 @@
     - [Manual Installation](#manual-installation)
 <!--toc:end-->
 > [!WARNING]
-> As of Dawarich 0.7.0 support for home assistant version < 2025.1 will be removed. See this [PR](https://github.com/AlbinLind/dawarich-home-assistant/pull/48) for further info.
+> As of Dawarich 0.8.0 support for home assistant version < 2025.1 has been removed.
 
 > [!NOTE]
 > This is an experimental integration for Dawarich, expect possibly breaking changes. This is a community integration, not affiliated with Dawarich.
@@ -16,7 +16,7 @@
 [Dawarich](https://dawarich.app/) is a self-hosted Google Timeline alternative ([see](https://support.google.com/maps/answer/14169818?hl=en&co=GENIE.Platform%3DAndroid) why you would want to consider it).
 
 This integration does two things, of which one is optional.
-1. It provides statistics for your account, this includes total distance in kilometers, number of cities visited etc.
+1. It provides statistics for your account, this includes total distance in kilometers, number of cities visited etc, and your current Dawarich version.
 2. (optional) You can set a device tracker (mobile phone for example) to send it's data through home assistant to Dawarich. That way you won't need another app, and can simply use the, probably already existing, location in HA.
 
 ## Install
