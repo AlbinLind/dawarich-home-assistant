@@ -1,6 +1,7 @@
 """Show statistical data from your Dawarich instance."""
 
 import logging
+from functools import cached_property
 from typing import TYPE_CHECKING
 
 from dawarich_api import DawarichAPI
@@ -169,13 +170,18 @@ class DawarichTrackerSensor(SensorEntity):
         self._state: DawarichTrackerStates = DawarichTrackerStates.UNKNOWN
         self._attr_options = [state.value for state in DawarichTrackerStates]
 
-    @property
+    @cached_property
     def unique_id(self) -> str:  # type: ignore[override]
         """Return a unique id for the sensor."""
         return f"{self._api_key}/tracker"
 
-    @property
-    def state(self) -> StateType:
+    @cached_property
+    def native_value(self) -> StateType:
+        """Return the state of the sensor."""
+        return self._state.value
+
+    @cached_property
+    def value(self) -> StateType:
         """Return the state of the sensor."""
         return self._state.value
 
@@ -270,22 +276,22 @@ class DawarichStatisticsSensor(CoordinatorEntity, SensorEntity):  # type: ignore
         self._attr_device_info = device_info
         self._attr_state_class = SensorStateClass.TOTAL
 
-    @property
-    def native_value(self) -> StateType:  # type: ignore[override]
+    @cached_property
+    def native_value(self) -> StateType:
         """Return the state of the device."""
         if self.coordinator.data is None:
             return None
         return self.coordinator.data[self.entity_description.key]
 
-    @property
-    def icon(self) -> str:  # type: ignore[override]
+    @cached_property
+    def icon(self) -> str:
         """Return the icon to use in the frontend."""
         if self.entity_description.icon is not None:
             return self.entity_description.icon
         return "mdi:eye"
 
-    @property
-    def name(self) -> str:  # type: ignore[override]
+    @cached_property
+    def name(self) -> str:
         """Return the name of the sensor."""
         if isinstance(self.entity_description.name, str):
             return f"{self._device_name} {self.entity_description.name.title()}"
@@ -309,8 +315,8 @@ class DawarichVersionSensor(CoordinatorEntity[DawarichVersionCoordinator], Senso
         self._attr_unique_id = f"{api_key}/{description.key}"
         self._attr_device_info = device_info
 
-    @property
-    def native_value(self) -> StateType:  # type: ignore[override]
+    @cached_property
+    def native_value(self) -> StateType:
         """Return the state of the device."""
         if self.coordinator.data is None:
             return None
