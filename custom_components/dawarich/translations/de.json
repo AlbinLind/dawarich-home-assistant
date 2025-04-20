@@ -54,6 +54,9 @@
           "success": "Erfolgreich",
           "error": "Fehler"
         }
+      },
+      "version": {
+        "name": "Version"
       }
     }
   }
