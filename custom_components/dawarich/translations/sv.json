@@ -55,6 +55,9 @@
           "success": "Lyckades",
           "error": "Misslyckades"
         }
+      },
+      "version": {
+        "name": "Version"
       }
     }
   }
