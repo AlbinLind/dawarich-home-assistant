@@ -218,6 +218,8 @@ class DawarichTrackerSensor(SensorEntity):
 
         if (speed := new_data.get("speed")) is not None:
             optional_params["speed"] = speed
+        elif (velocity := new_data.get("velocity")) is not None:
+            optional_params["speed"] = velocity
 
         if (battery := new_data.get("battery")) is not None:
             optional_params["battery"] = battery
