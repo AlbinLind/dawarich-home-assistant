@@ -41,18 +41,9 @@ Take the items under `custom_components/dawarich` and place them in the folder `
 ## Configuration
 Below are the configuration options for the Dawarich Home Assistant integration. After configuration, input your Dawarich API key when prompted, which is available on the Dawarich account page.
 
-### Direct Connection
-- **Host:** hostname / IP address of device running Dawarich or `localhost` if running Dawarich on the same device as Home Assistant
-- **Port:** Dawarich port
+- **Host:** hostname, IP address, or URL that resolves to the device running Dawarich
+- **Port:** port number for above host
 - **Name:** integration entry category to contain devices
 - **Device Tracker:** device tracker to send data to Dawarich
-- **Use SSL:** leave unchecked
-- **Verify SSL:** leave checked
-
-### Reverse Proxy
-- **Host:** your instance URL such as `dawarich.example.com`
-- **Port:** 80 for HTTP or 443 for HTTPS
-- **Name:** integration entry category to contain devices
-- **Device Tracker:** device tracker to send data to Dawarich
-- **Use SSL:** leave unchecked for HTTP or check it for HTTPS
-- **Verify SSL:** leave checked
+- **Use SSL:** check to use HTTPS
+- **Verify SSL:** verify SSL
