@@ -42,7 +42,7 @@ Take the items under `custom_components/dawarich` and place them in the folder `
 Below are the configuration options for the Dawarich Home Assistant integration. After configuration, input your Dawarich API key when prompted, which is available on the Dawarich account page.
 
 - **Host:** hostname, IP address, or URL that resolves to the device running Dawarich
-- **Port:** port number for above host
+- **Port:** port number for host
 - **Name:** integration entry category to contain devices
 - **Device Tracker:** device tracker to send data to Dawarich
 - **Use SSL:** check to use HTTPS (i.e. prepends url with `https`)
