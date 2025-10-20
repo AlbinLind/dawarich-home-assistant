@@ -261,7 +261,11 @@ class DawarichTrackerSensor(SensorEntity):
                 "Device not found in device registry. This should not happen."
             )
             return True
-        entity_entry = entity_registry.async_get(self.unique_id)
+        # HACK: We should be able to get the entity from the unique_id directly,
+        # but if you disable the entity you can no longer get it that way.
+        entity_entry = entity_registry.async_get(
+            f"sensor.{self._device_name.lower()}_tracker"
+        )
         if entity_entry is None:
             _LOGGER.error(
                 "Entity not found in entity registry. This should not happen."
