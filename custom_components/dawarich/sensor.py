@@ -12,6 +12,8 @@ from homeassistant.const import (
     UnitOfLength,
 )
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
@@ -184,6 +186,9 @@ class DawarichTrackerSensor(SensorEntity):
 
     async def _async_update_callback(self, event):
         """Update the Dawarich API with the new location."""
+        if await self._async_check_is_disabled():
+            return
+
         _LOGGER.debug(
             "State change detected for %s, updating Dawarich", self._mobile_app
         )
@@ -236,11 +241,35 @@ class DawarichTrackerSensor(SensorEntity):
             self._state = DawarichTrackerStates.SUCCESS
         else:
             self._state = DawarichTrackerStates.ERROR
+    async def _async_check_is_disabled(self) -> bool:
+        """Check if the Dawarich tracker sensor is disabled."""
+        device_registry = dr.async_get(self._hass)
+        entity_registry = er.async_get(self._hass)
+        device = device_registry.async_get_device(identifiers={(DOMAIN, self._api_key)})
+        if device is None:
             _LOGGER.error(
-                "Error sending location to Dawarich API response code %s and error: %s",
-                response.response_code,
-                response.error,
+                "Device not found in device registry. This should not happen."
             )
+            return True
+        entity_entry = entity_registry.async_get(self.unique_id)
+        if entity_entry is None:
+            _LOGGER.error(
+                "Entity not found in entity registry. This should not happen."
+            )
+            return True
+        if device.disabled:
+            _LOGGER.debug(
+                "State change detected for %s, however, Dawarich device is disabled, not updating.",
+                self._mobile_app,
+            )
+            return True
+        if entity_entry.disabled:
+            _LOGGER.debug(
+                "State change detected for %s, however, Dawarich tracker sensor is disabled, not updating.",
+                self._mobile_app,
+            )
+            return True
+        return False
 
     @property
     def name(self) -> str:  # type: ignore[override]
