@@ -209,6 +209,27 @@ class DawarichTrackerSensor(SensorEntity):
             _LOGGER.debug("Coordinates are not present, skipping update")
             return
 
+        optional_params = await self._async_add_optional_params(new_data)
+
+        # Send to Dawarich API
+        response = await self._api.add_one_point(
+            name=self._device_name,
+            latitude=latitude,
+            longitude=longitude,
+            **optional_params,
+        )
+        if response.success:
+            _LOGGER.debug("Location sent to Dawarich API")
+            self._state = DawarichTrackerStates.SUCCESS
+        else:
+            self._state = DawarichTrackerStates.ERROR
+            _LOGGER.error(
+                "Error sending location to Dawarich API response code %s and error: %s",
+                response.response_code,
+                response.error,
+            )
+
+    async def _async_add_optional_params(self, new_data: dict) -> dict:
         # Only include optional parameters if they have valid values
         optional_params = {}
 
@@ -228,19 +249,8 @@ class DawarichTrackerSensor(SensorEntity):
 
         if (battery := new_data.get("battery")) is not None:
             optional_params["battery"] = battery
+        return optional_params
 
-        # Send to Dawarich API
-        response = await self._api.add_one_point(
-            name=self._device_name,
-            latitude=latitude,
-            longitude=longitude,
-            **optional_params,
-        )
-        if response.success:
-            _LOGGER.debug("Location sent to Dawarich API")
-            self._state = DawarichTrackerStates.SUCCESS
-        else:
-            self._state = DawarichTrackerStates.ERROR
     async def _async_check_is_disabled(self) -> bool:
         """Check if the Dawarich tracker sensor is disabled."""
         device_registry = dr.async_get(self._hass)
