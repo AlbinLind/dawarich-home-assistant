@@ -1,0 +1,31 @@
+name: Publish ZIP to GitHub Release
+
+on:
+  release:
+    types: [published]
+
+defaults:
+  run:
+    working-directory: custom_components/dawarich
+
+jobs:
+  publish:
+    name: "Publish"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: "Zip component"
+        run: |
+          zip dawarich.zip -r ./
+
+      - name: "Upload assets"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ github.event.release.tag_name }} dawarich.zip
