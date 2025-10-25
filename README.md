@@ -43,3 +43,6 @@ Below are the configuration options for the Dawarich Home Assistant integration.
 - **Device Tracker:** device tracker to send data to Dawarich
 - **Use SSL:** check to use HTTPS (i.e. prepends url with `https`)
 - **Verify SSL:** make sure secure connection is made through SSL
+
+# Known Issues
+Below are some known issues that are being looked at, but with workarounds for the moment.
