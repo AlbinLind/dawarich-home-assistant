@@ -52,3 +52,10 @@ This warning shows up because we are trying to determine if the device or entity
 is disabled. If you change the name of the tracker sensor of Dawarich you will
 get a warning. If you at the same time have disabled the entity then this will,
 until you restart your home assistant instance, continue to send new locations.
+
+## Repair or Re-Configure
+At the moment neither a repair or reconfigure flow exists. This is being tracked
+in [#73](https://github.com/AlbinLind/dawarich-home-assistant/issues/73) and
+[#74](https://github.com/AlbinLind/dawarich-home-assistant/issues/74) respectively.
+If you remove the device and reconfigure it with the same name you should be able
+to reconfigure and keep the historical statistics.
