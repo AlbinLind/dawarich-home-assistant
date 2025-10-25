@@ -6,6 +6,9 @@
     - [Install with HACS](#install-with-hacs)
     - [Manual Installation](#manual-installation)
   - [Configuration](#configuration)
+  - [Known Issues](#known-issues)
+    - [Entity or Device not found in registry](#entity-or-device-not-found-in-registry)
+    - [Repair or Re-Configure](#repair-or-re-configure)
 <!--toc:end-->
 ---
 > [!NOTE]
@@ -44,16 +47,16 @@ Below are the configuration options for the Dawarich Home Assistant integration.
 - **Use SSL:** check to use HTTPS (i.e. prepends url with `https`)
 - **Verify SSL:** make sure secure connection is made through SSL
 
-# Known Issues
+## Known Issues
 Below are some known issues that are being looked at, but with workarounds for the moment.
 
-## Entity or Device not found in registry
+### Entity or Device not found in registry
 This warning shows up because we are trying to determine if the device or entity
 is disabled. If you change the name of the tracker sensor of Dawarich you will
 get a warning. If you at the same time have disabled the entity then this will,
 until you restart your home assistant instance, continue to send new locations.
 
-## Repair or Re-Configure
+### Repair or Re-Configure
 At the moment neither a repair or reconfigure flow exists. This is being tracked
 in [#73](https://github.com/AlbinLind/dawarich-home-assistant/issues/73) and
 [#74](https://github.com/AlbinLind/dawarich-home-assistant/issues/74) respectively.
