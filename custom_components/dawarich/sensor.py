@@ -266,22 +266,47 @@ class DawarichTrackerSensor(SensorEntity):
         """Check if the Dawarich tracker sensor is disabled."""
         device_registry = dr.async_get(self._hass)
         entity_registry = er.async_get(self._hass)
-        device = device_registry.async_get_device(identifiers={(DOMAIN, self._api_key)})
+
+        # Look up device
+        if self.device_entry is None:
+            _LOGGER.debug("No device entry found, instead looking based on identifiers")
+            device = device_registry.async_get_device(
+                identifiers={(DOMAIN, self._api_key)}
+            )
+        else:
+            _LOGGER.debug(
+                "Device entry found (%s), looking up device based on device entry",
+                self.device_entry.id,
+            )
+            # While the device entry could be the same we are re-querying
+            # it to ensure that we do not get a stale version.
+            device = device_registry.async_get(self.device_entry.id)
         if device is None:
-            _LOGGER.error(
-                "Device not found in device registry. This should not happen."
+            _LOGGER.warning(
+                "Device not found in device registry. This should not typically "
+                "happen. Try restarting Home Assistant.",
             )
-            return True
-        # HACK: We should be able to get the entity from the unique_id directly,
-        # but if you disable the entity you can no longer get it that way.
-        entity_entry = entity_registry.async_get(
-            f"sensor.{self._device_name.lower()}_tracker"
-        )
+            return False
+
+        # Look up entity
+        if self.registry_entry is None:
+            _LOGGER.debug("No registry entry found, looking up based on unique id")
+            entity_entry = entity_registry.async_get(self.unique_id)
+        else:
+            _LOGGER.debug(
+                "Registry entry found (%s), looking up entity based on registry entry",
+                self.registry_entry.entity_id,
+            )
+            # While the registry entry could be the same we are re-querying
+            # it to ensure that we do not get a stale version.
+            entity_entry = entity_registry.async_get(self.registry_entry.entity_id)
         if entity_entry is None:
-            _LOGGER.error(
-                "Entity not found in entity registry. This should not happen."
+            _LOGGER.warning(
+                "Entity not found in entity registry. This should not typically "
+                "happen. Try restarting Home Assistant.",
             )
-            return True
+            return False
+
         if device.disabled:
             _LOGGER.debug(
                 "State change detected for %s, however, Dawarich device is disabled, not updating.",
