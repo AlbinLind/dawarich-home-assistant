@@ -7,9 +7,7 @@
     - [Manual Installation](#manual-installation)
   - [Configuration](#configuration)
 <!--toc:end-->
-> [!WARNING]
-> As of Dawarich 0.8.0 support for home assistant version < 2025.1 has been removed.
-
+---
 > [!NOTE]
 > This is an experimental integration for Dawarich, expect possibly breaking changes. This is a community integration, not affiliated with Dawarich.
 
