@@ -6,8 +6,6 @@
     - [Install with HACS](#install-with-hacs)
     - [Manual Installation](#manual-installation)
   - [Configuration](#configuration)
-    - [Direct Connection](#direct-connection)
-    - [Reverse Proxy](#reverse-proxy)
 <!--toc:end-->
 > [!WARNING]
 > As of Dawarich 0.8.0 support for home assistant version < 2025.1 has been removed.
