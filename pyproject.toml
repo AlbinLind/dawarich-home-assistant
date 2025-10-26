@@ -90,7 +90,7 @@ select = [
   "SLOT",  # flake8-slots
   "T100",  # Trace found: {name} used
   "T20",   # flake8-print
-  "TC",   # flake8-type-checking
+  "TC",    # flake8-type-checking
   "TID",   # Tidy imports
   "TRY",   # tryceratops
   "UP",    # pyupgrade
@@ -132,8 +132,6 @@ ignore = [
 
   "TRY003", # Avoid specifying long messages outside the exception class
   "TRY400", # Use `logging.exception` instead of `logging.error`
-  # Ignored due to performance: https://github.com/charliermarsh/ruff/issues/2923
-  "UP038", # Use `X | Y` in `isinstance` call instead of `(X, Y)`
 
   # May conflict with the formatter, https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
   "W191",
