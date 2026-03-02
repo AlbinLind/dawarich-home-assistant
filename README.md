@@ -1,7 +1,7 @@
 # Dawarich Home Assistant Integration
 
 > [!IMPORTANT]
-> Version 0.9.0 includes a **breaking change** that affects entity identifiers.
+> Version 1.0.0 includes a **breaking change** that affects entity identifiers.
 > [More Information](#upgrading-to-v090)
 
 <!--toc:start-->
@@ -44,14 +44,14 @@ Take the items under `custom_components/dawarich` and place them in the folder `
 
 ## Upgrading
 
-### Upgrading to v0.9.0
+### Upgrading to v1.0.0
 
 > [!IMPORTANT]
-> Version 0.9.0 includes a **breaking change** that affects entity identifiers.
+> Version 1.0.0 includes a **breaking change** that affects entity identifiers.
 
-In version 0.9.0, we changed how device and entity unique IDs are generated. Previously, they were based on the API key, which caused issues when reconfiguring credentials. Now they use the stable config entry ID.
+In version 1.0.0, we changed how device and entity unique IDs are generated. Previously, they were based on the API key, which caused issues when reconfiguring credentials. Now they use the stable config entry ID.
 
-**If you are upgrading from a version earlier than 0.9.0**, you need to:
+**If you are upgrading from a version earlier than 1.0.0**, you need to:
 
 1. **Delete** the existing Dawarich integration from Home Assistant
    - Go to **Settings** → **Devices & Services** → **Dawarich**
@@ -63,7 +63,7 @@ In version 0.9.0, we changed how device and entity unique IDs are generated. Pre
 > [!TIP]
 > **Your history will be preserved!** When you re-add the integration with the same name, the new entity IDs will be generated based on the config entry ID. Since this creates the same entity IDs as before, Home Assistant will automatically reconnect your historical data to the new entities.
 
-This is a one-time migration. After upgrading to 0.9.0, you can use the new **Reconfigure** option (⋮ menu → Reconfigure) to update your settings, including your API key, without losing your entities or history.
+This is a one-time migration. After upgrading to 1.0.0, you can use the new **Reconfigure** option (⋮ menu → Reconfigure) to update your settings, including your API key, without losing your entities or history.
 
 ## Configuration
 Below are the configuration options for the Dawarich Home Assistant integration. After configuration, input your Dawarich API key when prompted, which is available on the Dawarich account page.
@@ -83,5 +83,6 @@ This warning shows up because we are trying to determine if the device or entity
 is disabled. If you change the name of the tracker sensor of Dawarich you will
 get a warning. If you at the same time have disabled the entity then this will,
 until you restart your home assistant instance, continue to send new locations.
+
 
 
