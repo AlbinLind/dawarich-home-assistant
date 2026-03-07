@@ -2,14 +2,13 @@ name: Release Branch Automatically
 
 on:
   create:
-    branches:
-      - 'release/*'
 
 permissions:
   contents: write
 
 jobs:
   prepare-release:
+    if: ${{ startsWith(github.ref, 'refs/heads/releases') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -51,5 +50,4 @@ jobs:
           target_commitish: "${{ github.ref }}"
           generate_release_notes: true
           prerelease: "${{ steps.version.outputs.prerelease }}"
-
 
