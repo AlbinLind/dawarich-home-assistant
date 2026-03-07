@@ -254,7 +254,14 @@ class DawarichTrackerSensor(SensorEntity):
         new_state = event.data.get("new_state")
 
         # Check entity availability and manage repair issue
+        # `_async_check_entity_availability` returns False when the
+        # state is unavailable/unknown (or None) and creates a repair
+        # issue if needed. Early return avoids further processing.
         if not self._async_check_entity_availability(new_state):
+            return
+
+        if new_state is None:
+            _LOGGER.error("No new state found for %s", self._mobile_app)
             return
 
         # Log received data
