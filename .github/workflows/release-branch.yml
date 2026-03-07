@@ -32,7 +32,7 @@ jobs:
       - name: Update manifest.json version
         run: |
           VERSION=${{ steps.version.outputs.version }}
-          jq --arg -v "$VERSION" '.version=$v' ./custom_components/dawarich/manifest.json > manifest.tmp
+          jq --arg v "$VERSION" '.version=$v' ./custom_components/dawarich/manifest.json > manifest.tmp
           mv manifest.tmp ./custom_components/dawarich/manifest.json
 
       - name: Commit version update
