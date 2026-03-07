@@ -1,7 +1,9 @@
 """The Dawarich integration."""
 
+import json
 import logging
 from dataclasses import dataclass
+from pathlib import Path
 
 from dawarich_api import DawarichAPI
 from homeassistant import config_entries
@@ -21,7 +23,7 @@ from .const import CONF_DEVICE, DOMAIN
 from .coordinator import DawarichStatsCoordinator, DawarichVersionCoordinator
 from .helpers import get_api
 
-VERSION = "0.7.0"
+VERSION = json.loads((Path(__file__).parent / "manifest.json").read_text())["version"]
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 

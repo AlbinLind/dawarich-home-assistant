@@ -323,6 +323,12 @@ class DawarichTrackerSensor(SensorEntity):
 
         if (battery := new_data.get("battery")) is not None:
             optional_params["battery"] = battery
+
+        if (raw_timestamp := new_data.get("last_seen")) is not None or (
+            raw_timestamp := new_data.get("last_timestamp")
+        ) is not None:
+            optional_params["timestamp"] = raw_timestamp
+
         return optional_params
 
     async def _async_check_is_disabled(self) -> bool:
