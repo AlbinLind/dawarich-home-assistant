@@ -84,7 +84,9 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Optional(
                         CONF_DEVICE, msg="If you want to track your device"
                     ): selector.EntitySelector(
-                        selector.EntitySelectorConfig(domain="device_tracker")
+                        selector.EntitySelectorConfig(
+                            domain=["device_tracker", "person"]
+                        )
                     ),
                     vol.Required(
                         CONF_SSL, default=user_input.get(CONF_SSL, DEFAULT_SSL)
