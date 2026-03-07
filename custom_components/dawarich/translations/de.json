@@ -90,6 +90,10 @@
     "device_tracker_unavailable": {
       "title": "Geräte-Tracker nicht verfügbar",
       "description": "Der Geräte-Tracker `{device_tracker}`, der für {device_name} konfiguriert ist, ist nicht verfügbar. Dies kann daran liegen, dass die Entität entfernt wurde oder die Integration, die sie bereitstellt, nicht geladen ist. Bitte überprüfen Sie die Entität oder konfigurieren Sie die Dawarich-Integration neu, um einen anderen Geräte-Tracker zu verwenden."
+    },
+    "api_unavailable": {
+      "title": "Dawarich API nicht erreichbar",
+      "description": "Die Dawarich API unter `{url}` ist nicht erreichbar. Der Server hat den Statuscode {status_code} mit folgendem Fehler zurückgegeben: {error}. Bitte überprüfen Sie, ob Ihr Dawarich-Server läuft und erreichbar ist."
     }
   }
 }

@@ -90,6 +90,10 @@
     "device_tracker_unavailable": {
       "title": "Apparaat-tracker niet beschikbaar",
       "description": "De apparaat-tracker `{device_tracker}` geconfigureerd voor {device_name} is niet beschikbaar. Dit kan komen doordat de entiteit is verwijderd of de integratie die deze aanbiedt niet is geladen. Controleer de entiteit of configureer de Dawarich-integratie opnieuw om een andere apparaat-tracker te gebruiken."
+    },
+    "api_unavailable": {
+      "title": "Dawarich API niet bereikbaar",
+      "description": "De Dawarich API op `{url}` is niet bereikbaar. De server retourneerde statuscode {status_code} met fout: {error}. Controleer of uw Dawarich-server actief en bereikbaar is."
     }
   }
 }

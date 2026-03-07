@@ -188,8 +188,11 @@ class DawarichTrackerSensor(SensorEntity):
         return f"device_tracker_unavailable_{self._entry_id}"
 
     @callback
-    def _async_check_entity_availability(self, state) -> None:
-        """Check if the tracked entity is available and manage repair issue."""
+    def _async_check_entity_availability(self, state) -> bool:
+        """Check if the tracked entity is available and manage repair issue.
+        
+        Returns True if the entity is available, False otherwise.
+        """
         if state is None or state.state in ("unavailable", "unknown"):
             if not self._repair_issue_created:
                 _LOGGER.warning(
@@ -209,13 +212,15 @@ class DawarichTrackerSensor(SensorEntity):
                     },
                 )
                 self._repair_issue_created = True
-        elif self._repair_issue_created:
+            return False
+        if self._repair_issue_created:
             _LOGGER.info(
                 "Device tracker %s is available again, clearing repair issue.",
                 self._mobile_app,
             )
             async_delete_issue(self._hass, DOMAIN, self._issue_id)
             self._repair_issue_created = False
+        return True
 
     async def async_will_remove_from_hass(self) -> None:
         """Clean up when entity is removed."""
@@ -249,10 +254,7 @@ class DawarichTrackerSensor(SensorEntity):
         new_state = event.data.get("new_state")
 
         # Check entity availability and manage repair issue
-        self._async_check_entity_availability(new_state)
-
-        if new_state is None:
-            _LOGGER.error("No new state found for %s", self._mobile_app)
+        if not self._async_check_entity_availability(new_state):
             return
 
         # Log received data

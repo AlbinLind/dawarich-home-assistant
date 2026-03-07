@@ -90,6 +90,10 @@
     "device_tracker_unavailable": {
       "title": "Device tracker unavailable",
       "description": "The device tracker `{device_tracker}` configured for {device_name} is not available. This may be because the entity has been removed or the integration providing it is not loaded. Please check the entity or reconfigure the Dawarich integration to use a different device tracker."
+    },
+    "api_unavailable": {
+      "title": "Dawarich API unavailable",
+      "description": "The Dawarich API at `{url}` is not reachable. The server returned status code {status_code} with error: {error}. Please check that your Dawarich server is running and accessible."
     }
   }
 }

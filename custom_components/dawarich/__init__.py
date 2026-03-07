@@ -57,9 +57,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: DawarichConfigEntry) -> 
             " dawarich-home-assistantyou will need at least Home Assistant Core version 2025.1"
         )
 
-    coordinator = DawarichStatsCoordinator(hass, api)
+    coordinator = DawarichStatsCoordinator(hass, api, entry.entry_id)
     await coordinator.async_config_entry_first_refresh()
-    version_coordinator = DawarichVersionCoordinator(hass, api)
+    version_coordinator = DawarichVersionCoordinator(hass, api, entry.entry_id)
     await version_coordinator.async_config_entry_first_refresh()
 
     entry.runtime_data = DawarichConfigEntryData(
