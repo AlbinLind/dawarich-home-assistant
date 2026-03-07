@@ -90,7 +90,7 @@
   "issues": {
     "device_tracker_unavailable": {
       "title": "Enhetspårare inte tillgänglig",
-      "description": "Enhetspåraren `{device_tracker}` som är konfigurerad för {device_name} är inte tillgänglig. Detta kan bero på att entiteten har tagits bort eller att integrationen som tillhandahåller den inte är laddad. Kontrollera entiteten eller konfigurera om Dawarich-integrationen för att använda en annan enhetspårare."
+      "description": "Enhetspåraren `{device_tracker}` som är konfigurerad för {device_name} är inte tillgänglig. Detta kan bero på att entiteten har tagits bort eller att integrationen som tillhandahåller den inte är laddad. Kontrollera entiteten eller omkonfigurera Dawarich-integrationen för att använda en annan enhetspårare."
     }
   }
 }
