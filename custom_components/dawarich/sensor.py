@@ -248,7 +248,6 @@ class DawarichTrackerSensor(SensorEntity):
         )
         new_state = event.data.get("new_state")
 
-        # Check entity availability and manage repair issue
         self._async_check_entity_availability(new_state)
 
         if new_state is None:
