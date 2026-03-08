@@ -86,5 +86,15 @@
         "name": "Version"
       }
     }
+  },
+  "issues": {
+    "device_tracker_unavailable": {
+      "title": "Enhetspårare inte tillgänglig",
+      "description": "Enhetspåraren `{device_tracker}` som är konfigurerad för {device_name} är inte tillgänglig. Detta kan bero på att entiteten har tagits bort eller att integrationen som tillhandahåller den inte är laddad. Kontrollera entiteten eller omkonfigurera Dawarich-integrationen för att använda en annan enhetspårare."
+    },
+    "api_unavailable": {
+      "title": "Dawarich API inte tillgängligt",
+      "description": "Dawarich API:n på `{url}` är inte nåbar. Servern svarade med statuskod {status_code} och fel: {error}. Kontrollera att din Dawarich-server är igång och är tillgänglig."
+    }
   }
 }

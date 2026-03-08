@@ -11,12 +11,17 @@ from homeassistant.const import (
     CONF_NAME,
     UnitOfLength,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.helpers.issue_registry import (
+    IssueSeverity,
+    async_create_issue,
+    async_delete_issue,
+)
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -161,6 +166,7 @@ class DawarichTrackerSensor(SensorEntity):
         self._attr_device_info = device_info
         self._attr_device_class = description.device_class
         self.entity_description = description
+        self._repair_issue_created = False
 
         self._async_unsubscribe_state_changed = async_track_state_change_event(
             hass=self._hass,
@@ -169,6 +175,58 @@ class DawarichTrackerSensor(SensorEntity):
         )
         self._state: DawarichTrackerStates = DawarichTrackerStates.UNKNOWN
         self._attr_options = [state.value for state in DawarichTrackerStates]
+
+    async def async_added_to_hass(self) -> None:
+        """Run when entity is added to hass."""
+        # Check initial state of the tracked entity
+        initial_state = self._hass.states.get(self._mobile_app)
+        self._async_check_entity_availability(initial_state)
+
+    @property
+    def _issue_id(self) -> str:
+        """Return the issue id for the repair issue."""
+        return f"device_tracker_unavailable_{self._entry_id}"
+
+    @callback
+    def _async_check_entity_availability(self, state) -> bool:
+        """Check if the tracked entity is available and manage repair issue.
+
+        Returns True if the entity is available, False otherwise.
+        """
+        if state is None or state.state in ("unavailable", "unknown"):
+            if not self._repair_issue_created:
+                _LOGGER.warning(
+                    "Device tracker %s is not available. Please check the entity.",
+                    self._mobile_app,
+                )
+                async_create_issue(
+                    self._hass,
+                    DOMAIN,
+                    self._issue_id,
+                    is_fixable=False,
+                    severity=IssueSeverity.WARNING,
+                    translation_key="device_tracker_unavailable",
+                    translation_placeholders={
+                        "device_tracker": self._mobile_app,
+                        "device_name": self._device_name,
+                    },
+                )
+                self._repair_issue_created = True
+            return False
+        if self._repair_issue_created:
+            _LOGGER.info(
+                "Device tracker %s is available again, clearing repair issue.",
+                self._mobile_app,
+            )
+            async_delete_issue(self._hass, DOMAIN, self._issue_id)
+            self._repair_issue_created = False
+        return True
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Clean up when entity is removed."""
+        self._async_unsubscribe_state_changed()
+        if self._repair_issue_created:
+            async_delete_issue(self._hass, DOMAIN, self._issue_id)
 
     @property
     def unique_id(self) -> str:  # type: ignore[override]
@@ -193,7 +251,12 @@ class DawarichTrackerSensor(SensorEntity):
         _LOGGER.debug(
             "State change detected for %s, updating Dawarich", self._mobile_app
         )
-        if (new_state := event.data.get("new_state")) is None:
+        new_state = event.data.get("new_state")
+
+        if not self._async_check_entity_availability(new_state):
+            return
+
+        if new_state is None:
             _LOGGER.error("No new state found for %s", self._mobile_app)
             return
 
