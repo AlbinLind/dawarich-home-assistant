@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   prepare-release:
-    if: ${{ startsWith(github.ref, 'refs/heads/releases') }}
+    if: ${{ startsWith(github.ref, 'refs/heads/release') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
