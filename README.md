@@ -2,7 +2,7 @@
 
 > [!IMPORTANT]
 > Version 1.0.0 includes a **breaking change** that affects entity identifiers.
-> [More Information](#upgrading-to-v090)
+> [More Information](#upgrading-to-v100)
 
 <!--toc:start-->
 - [Dawarich Home Assistant Integration](#dawarich-home-assistant-integration)
@@ -83,3 +83,4 @@ This warning shows up because we are trying to determine if the device or entity
 is disabled. If you change the name of the tracker sensor of Dawarich you will
 get a warning. If you at the same time have disabled the entity then this will,
 until you restart your home assistant instance, continue to send new locations.
+
