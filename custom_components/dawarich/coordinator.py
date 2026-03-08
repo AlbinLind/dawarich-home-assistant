@@ -97,10 +97,10 @@ class DawarichStatsCoordinator(DataUpdateCoordinator):
                     response.response_code,
                     response.error,
                 )
-                
+
                 # Create repair issue for API unavailability (5xx errors, timeouts, etc.)
                 self._async_create_api_issue(response.response_code, response.error)
-                
+
                 raise UpdateFailed(
                     f"Error fetching data from Dawarich (status {response.response_code})"
                 )

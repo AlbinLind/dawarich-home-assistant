@@ -190,7 +190,7 @@ class DawarichTrackerSensor(SensorEntity):
     @callback
     def _async_check_entity_availability(self, state) -> bool:
         """Check if the tracked entity is available and manage repair issue.
-        
+
         Returns True if the entity is available, False otherwise.
         """
         if state is None or state.state in ("unavailable", "unknown"):
