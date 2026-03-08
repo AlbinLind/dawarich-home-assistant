@@ -59,7 +59,7 @@
     },
     "api_unavailable": {
       "title": "Dawarich API unavailable",
-      "description": "The Dawarich API at `{url}` is not reachable. The server returned status code {status_code} with error: {error}. Please check that your Dawarich server is running and accessible."
+      "description": "The Dawarich API at `{url}` is not reachable. The server returned status code {status_code} with error: {error}. Please make sure that your Dawarich server is running and is accessible."
     }
   }
 }

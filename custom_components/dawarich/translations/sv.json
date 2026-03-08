@@ -94,7 +94,7 @@
     },
     "api_unavailable": {
       "title": "Dawarich API inte tillgängligt",
-      "description": "Dawarich API på `{url}` är inte nåbart. Servern returnerade statuskod {status_code} med fel: {error}. Kontrollera att din Dawarich-server körs och är tillgänglig."
+      "description": "Dawarich API:n på `{url}` är inte nåbar. Servern svarade med statuskod {status_code} och fel: {error}. Kontrollera att din Dawarich-server är igång och är tillgänglig."
     }
   }
 }
