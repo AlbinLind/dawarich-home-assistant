@@ -10,7 +10,7 @@
     - [Install with HACS](#install-with-hacs)
     - [Manual Installation](#manual-installation)
   - [Upgrading](#upgrading)
-    - [Upgrading to v0.9.0](#upgrading-to-v090)
+    - [Upgrading to v1.0.0](#upgrading-to-v100)
   - [Configuration](#configuration)
   - [Known Issues](#known-issues)
     - [Entity or Device not found in registry](#entity-or-device-not-found-in-registry)
@@ -83,6 +83,7 @@ This warning shows up because we are trying to determine if the device or entity
 is disabled. If you change the name of the tracker sensor of Dawarich you will
 get a warning. If you at the same time have disabled the entity then this will,
 until you restart your home assistant instance, continue to send new locations.
+
 
 
 
