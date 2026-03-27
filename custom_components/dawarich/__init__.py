@@ -19,7 +19,12 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 
-from .const import CONF_DEVICE, DOMAIN
+from .const import (
+    CONF_DEVICE,
+    CONF_MIN_DISTANCE,
+    DEFAULT_MIN_DISTANCE,
+    DOMAIN,
+)
 from .coordinator import DawarichStatsCoordinator, DawarichVersionCoordinator
 from .helpers import get_api
 
@@ -84,10 +89,10 @@ async def async_unload_entry(
     return unload_ok
 
 
-# Migration from 1 to 2
+# Migration from 1 to 2 to 3
 async def async_migrate_entry(hass: HomeAssistant, entry: config_entries.ConfigEntry):
     """Migrate an old entry."""
-    if entry.version > 1:
+    if entry.version > 2:
         # Downgrade not supported
         return False
 
@@ -115,6 +120,13 @@ async def async_migrate_entry(hass: HomeAssistant, entry: config_entries.ConfigE
         data[CONF_DEVICE] = entry.data.get("mobile_app", None)
 
         hass.config_entries.async_update_entry(entry, data=data, version=2)
+
+    if entry.version == 2:
+        new_data = {**entry.data}
+        if CONF_MIN_DISTANCE not in new_data:
+            new_data[CONF_MIN_DISTANCE] = DEFAULT_MIN_DISTANCE
+
+        hass.config_entries.async_update_entry(entry, data=new_data, version=3)
 
     _LOGGER.info("Migrated %s to config flow version %s", entry.entry_id, entry.version)
     return True
