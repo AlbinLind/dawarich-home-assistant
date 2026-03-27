@@ -38,7 +38,7 @@
           "ssl": "Use SSL (i.e. https)",
           "verify_ssl": "Verify SSL",
           "api_key": "API Key (leave empty to keep current)",
-          "min_distance": "Minimum distance change (meters)"
+          "min_distance": "Minimum distance change from last point for a new update (meters)"
         }
       }
     },
