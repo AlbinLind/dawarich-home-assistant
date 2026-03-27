@@ -18,6 +18,8 @@ from homeassistant.helpers import selector
 
 from .const import (
     CONF_DEVICE,
+    CONF_MIN_DISTANCE,
+    DEFAULT_MIN_DISTANCE,
     DEFAULT_NAME,
     DEFAULT_PORT,
     DEFAULT_SSL,
@@ -32,7 +34,7 @@ _LOGGER = logging.getLogger(__name__)
 class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Dawarich."""
 
-    VERSION = 2
+    VERSION = 3
 
     def __init__(self) -> None:
         """Initialize Dawarich config flow."""
@@ -52,6 +54,9 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_SSL: user_input[CONF_SSL],
                 CONF_VERIFY_SSL: user_input[CONF_VERIFY_SSL],
                 CONF_DEVICE: user_input.get(CONF_DEVICE),
+                CONF_MIN_DISTANCE: user_input.get(
+                    CONF_MIN_DISTANCE, DEFAULT_MIN_DISTANCE
+                ),
             }
 
             self._async_abort_entries_match(
@@ -95,6 +100,10 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_VERIFY_SSL,
                         default=user_input.get(CONF_VERIFY_SSL, DEFAULT_VERIFY_SSL),
                     ): bool,
+                    vol.Required(
+                        CONF_MIN_DISTANCE,
+                        default=user_input.get(CONF_MIN_DISTANCE, DEFAULT_MIN_DISTANCE),
+                    ): vol.Coerce(int),
                 }
             ),
             errors=errors,
@@ -215,6 +224,9 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_SSL: user_input[CONF_SSL],
                 CONF_VERIFY_SSL: user_input[CONF_VERIFY_SSL],
                 CONF_DEVICE: user_input.get(CONF_DEVICE),
+                CONF_MIN_DISTANCE: user_input.get(
+                    CONF_MIN_DISTANCE, DEFAULT_MIN_DISTANCE
+                ),
                 CONF_API_KEY: new_api_key,
             }
 
@@ -233,6 +245,9 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_NAME: current_data.get(CONF_NAME, DEFAULT_NAME),
                 CONF_SSL: current_data.get(CONF_SSL, DEFAULT_SSL),
                 CONF_VERIFY_SSL: current_data.get(CONF_VERIFY_SSL, DEFAULT_VERIFY_SSL),
+                CONF_MIN_DISTANCE: current_data.get(
+                    CONF_MIN_DISTANCE, DEFAULT_MIN_DISTANCE
+                ),
             }
 
         return self.async_show_form(
@@ -269,6 +284,10 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_API_KEY,
                         description={"suggested_value": ""},
                     ): str,
+                    vol.Optional(
+                        CONF_MIN_DISTANCE,
+                        default=user_input.get(CONF_MIN_DISTANCE),
+                    ): vol.Coerce(int),
                 }
             ),
             errors=errors,
