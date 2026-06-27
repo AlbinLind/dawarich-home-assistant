@@ -255,7 +255,9 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_DEVICE,
                         description={"suggested_value": current_data.get(CONF_DEVICE)},
                     ): selector.EntitySelector(
-                        selector.EntitySelectorConfig(domain="device_tracker")
+                        selector.EntitySelectorConfig(
+                            domain=["device_tracker", "person"],
+                        )
                     ),
                     vol.Required(
                         CONF_SSL,
