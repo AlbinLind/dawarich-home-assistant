@@ -19,7 +19,10 @@ DEFAULT_MIN_DISTANCE = 0
 CONF_HEARTBEAT_INTERVAL = "heartbeat_interval"
 DEFAULT_HEARTBEAT_INTERVAL = 0
 CONF_HEARTBEAT_IDLE_AFTER = "heartbeat_idle_after"
-DEFAULT_HEARTBEAT_IDLE_AFTER = 120
+# Kept short on purpose: active-cadence heartbeats fired while the device is
+# already parked fall inside the merge floor, so they extend the journey's track
+# by however long this is. Just long enough to establish the visit.
+DEFAULT_HEARTBEAT_IDLE_AFTER = 30
 CONF_HEARTBEAT_IDLE_INTERVAL = "heartbeat_idle_interval"
 DEFAULT_HEARTBEAT_IDLE_INTERVAL = 45
 

@@ -100,6 +100,9 @@ When the device starts moving again, the integration re-sends the **last station
 > [!NOTE]
 > If you raise the idle interval above your Dawarich server's `stay_max_gap_minutes` (default 60, adjustable via `PATCH /api/v1/settings` — there is no UI field for it), stays will start fragmenting again. Keep the idle interval between 30 and that value.
 
+> [!IMPORTANT]
+> **Don't raise "drop to idle heartbeat after" much beyond its default.** Dawarich puts no minimum distance or duration on a track — any two points close enough in time form one. Heartbeats fired at the *active* cadence while the device is already parked are closer together than the 30 minute merge floor, so they land in the same segment as the journey that just ended and extend that track for as long as this setting lasts. At 120 minutes a 30 minute commute records as a 2.5 hour track sitting at home. The default of 30 minutes is long enough to establish the visit while keeping that tail short; the idle cadence takes over from there and, at 45 minutes, keeps the stay alive without joining anything.
+
 ### Service: `dawarich.push_location`
 Call this service against your Dawarich tracker sensor entity to push the current location on demand, for example from your own automation on a custom schedule.
 
