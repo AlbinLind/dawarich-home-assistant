@@ -72,10 +72,13 @@ Below are the configuration options for the Dawarich Home Assistant integration.
 - **Port:** port number for host
 - **Name:** integration entry category to contain devices
 - **Device Tracker:** device tracker to send data to Dawarich
-- **Minimum distance:** meters the tracker must have moved since the last point sent before a state change is forwarded. Filters out attribute-only updates (battery, wifi, GPS jitter). `0` disables it, which is the previous behavior.
-- **Heartbeat interval:** minutes between location pushes while the device is active, independent of state changes. `0` disables the heartbeat entirely.
-- **Drop to idle heartbeat after:** minutes without real movement before the heartbeat slows to its idle cadence.
-- **Idle heartbeat interval:** minutes between pushes once the device is considered stationary.
+- **Minimum distance:** meters the tracker must have moved since the last point sent before a state change is forwarded. Filters out attribute-only updates (battery, wifi, GPS jitter). Defaults to `100`, matching Dawarich's own `visit_radius_meters`. `0` disables it.
+- **Heartbeat interval:** minutes between location pushes while the device is active, independent of state changes. Defaults to `15`. `0` disables the heartbeat entirely.
+- **Drop to idle heartbeat after:** minutes without real movement before the heartbeat slows to its idle cadence. Defaults to `30`.
+- **Idle heartbeat interval:** minutes between pushes once the device is considered stationary. Defaults to `45`.
+
+> [!WARNING]
+> Minimum distance and the heartbeat are meant to be used together. Filtering state changes without a heartbeat to replace them leaves *larger* gaps than running neither, which makes visit fragmentation worse. If you set **Heartbeat interval** to `0`, set **Minimum distance** to `0` as well.
 - **Use SSL:** check to use HTTPS (i.e. prepends url with `https`)
 - **Verify SSL:** make sure secure connection is made through SSL
 

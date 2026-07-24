@@ -15,9 +15,13 @@ UPDATE_INTERVAL = timedelta(seconds=60)
 VERSION_UPDATE_INTERVAL = timedelta(hours=1)
 
 CONF_MIN_DISTANCE = "min_distance"
-DEFAULT_MIN_DISTANCE = 0
+# Matches Dawarich's own `visit_radius_meters` default: if the device hasn't
+# left the radius that defines a place, there is nothing worth sending.
+DEFAULT_MIN_DISTANCE = 100
 CONF_HEARTBEAT_INTERVAL = "heartbeat_interval"
-DEFAULT_HEARTBEAT_INTERVAL = 0
+# Paired with the distance filter on purpose. Filtering state changes without a
+# heartbeat to replace them would leave larger gaps than doing neither.
+DEFAULT_HEARTBEAT_INTERVAL = 15
 CONF_HEARTBEAT_IDLE_AFTER = "heartbeat_idle_after"
 # Kept short on purpose: active-cadence heartbeats fired while the device is
 # already parked fall inside the merge floor, so they extend the journey's track
