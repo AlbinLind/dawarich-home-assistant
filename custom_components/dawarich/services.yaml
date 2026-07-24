@@ -1,0 +1,5 @@
+push_location:
+  target:
+    entity:
+      integration: dawarich
+      domain: sensor

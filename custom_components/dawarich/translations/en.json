@@ -9,6 +9,10 @@
           "port": "Port",
           "name": "Name",
           "mobile_app": "Device Tracker",
+          "min_distance": "Minimum distance (meters, 0 to disable)",
+          "heartbeat_interval": "Heartbeat interval (minutes, 0 to disable)",
+          "heartbeat_idle_after": "Drop to idle heartbeat after (minutes)",
+          "heartbeat_idle_interval": "Idle heartbeat interval (minutes)",
           "ssl": "Use SSL (i.e. https)",
           "verify_ssl": "Verify SSL"
         }
@@ -35,6 +39,10 @@
           "port": "Port",
           "name": "Name",
           "mobile_app": "Device Tracker",
+          "min_distance": "Minimum distance (meters, 0 to disable)",
+          "heartbeat_interval": "Heartbeat interval (minutes, 0 to disable)",
+          "heartbeat_idle_after": "Drop to idle heartbeat after (minutes)",
+          "heartbeat_idle_interval": "Idle heartbeat interval (minutes)",
           "ssl": "Use SSL (i.e. https)",
           "verify_ssl": "Verify SSL",
           "api_key": "API Key (leave empty to keep current)"
@@ -94,6 +102,12 @@
     "api_unavailable": {
       "title": "Dawarich API unavailable",
       "description": "The Dawarich API at `{url}` is not reachable. The server returned status code {status_code} with error: {error}. Please make sure that your Dawarich server is running and is accessible."
+    }
+  },
+  "services": {
+    "push_location": {
+      "name": "Push location",
+      "description": "Sends the tracker's current location to Dawarich immediately, regardless of whether the tracked entity's state has changed."
     }
   }
 }

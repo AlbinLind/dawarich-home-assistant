@@ -18,6 +18,14 @@ from homeassistant.helpers import selector
 
 from .const import (
     CONF_DEVICE,
+    CONF_HEARTBEAT_IDLE_AFTER,
+    CONF_HEARTBEAT_IDLE_INTERVAL,
+    CONF_HEARTBEAT_INTERVAL,
+    CONF_MIN_DISTANCE,
+    DEFAULT_HEARTBEAT_IDLE_AFTER,
+    DEFAULT_HEARTBEAT_IDLE_INTERVAL,
+    DEFAULT_HEARTBEAT_INTERVAL,
+    DEFAULT_MIN_DISTANCE,
     DEFAULT_NAME,
     DEFAULT_PORT,
     DEFAULT_SSL,
@@ -27,6 +35,46 @@ from .const import (
 from .helpers import get_api
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _tracking_options_schema(values: Mapping[str, Any]) -> dict:
+    """Build the schema fragment for the optional tracker tuning options."""
+    return {
+        vol.Optional(
+            CONF_MIN_DISTANCE,
+            default=values.get(CONF_MIN_DISTANCE, DEFAULT_MIN_DISTANCE),
+        ): vol.All(vol.Coerce(int), vol.Range(min=0)),
+        vol.Optional(
+            CONF_HEARTBEAT_INTERVAL,
+            default=values.get(CONF_HEARTBEAT_INTERVAL, DEFAULT_HEARTBEAT_INTERVAL),
+        ): vol.All(vol.Coerce(int), vol.Range(min=0)),
+        vol.Optional(
+            CONF_HEARTBEAT_IDLE_AFTER,
+            default=values.get(CONF_HEARTBEAT_IDLE_AFTER, DEFAULT_HEARTBEAT_IDLE_AFTER),
+        ): vol.All(vol.Coerce(int), vol.Range(min=0)),
+        vol.Optional(
+            CONF_HEARTBEAT_IDLE_INTERVAL,
+            default=values.get(
+                CONF_HEARTBEAT_IDLE_INTERVAL, DEFAULT_HEARTBEAT_IDLE_INTERVAL
+            ),
+        ): vol.All(vol.Coerce(int), vol.Range(min=0)),
+    }
+
+
+def _tracking_options_config(user_input: Mapping[str, Any]) -> dict:
+    """Pull the tracker tuning options out of submitted form input."""
+    return {
+        CONF_MIN_DISTANCE: user_input.get(CONF_MIN_DISTANCE, DEFAULT_MIN_DISTANCE),
+        CONF_HEARTBEAT_INTERVAL: user_input.get(
+            CONF_HEARTBEAT_INTERVAL, DEFAULT_HEARTBEAT_INTERVAL
+        ),
+        CONF_HEARTBEAT_IDLE_AFTER: user_input.get(
+            CONF_HEARTBEAT_IDLE_AFTER, DEFAULT_HEARTBEAT_IDLE_AFTER
+        ),
+        CONF_HEARTBEAT_IDLE_INTERVAL: user_input.get(
+            CONF_HEARTBEAT_IDLE_INTERVAL, DEFAULT_HEARTBEAT_IDLE_INTERVAL
+        ),
+    }
 
 
 class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -52,6 +100,7 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_SSL: user_input[CONF_SSL],
                 CONF_VERIFY_SSL: user_input[CONF_VERIFY_SSL],
                 CONF_DEVICE: user_input.get(CONF_DEVICE),
+                **_tracking_options_config(user_input),
             }
 
             self._async_abort_entries_match(
@@ -88,6 +137,7 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             domain=["device_tracker", "person"]
                         )
                     ),
+                    **_tracking_options_schema(user_input),
                     vol.Required(
                         CONF_SSL, default=user_input.get(CONF_SSL, DEFAULT_SSL)
                     ): bool,
@@ -215,6 +265,7 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_SSL: user_input[CONF_SSL],
                 CONF_VERIFY_SSL: user_input[CONF_VERIFY_SSL],
                 CONF_DEVICE: user_input.get(CONF_DEVICE),
+                **_tracking_options_config(user_input),
                 CONF_API_KEY: new_api_key,
             }
 
@@ -233,6 +284,7 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_NAME: current_data.get(CONF_NAME, DEFAULT_NAME),
                 CONF_SSL: current_data.get(CONF_SSL, DEFAULT_SSL),
                 CONF_VERIFY_SSL: current_data.get(CONF_VERIFY_SSL, DEFAULT_VERIFY_SSL),
+                **_tracking_options_config(current_data),
             }
 
         return self.async_show_form(
@@ -259,6 +311,7 @@ class DawarichConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             domain=["device_tracker", "person"],
                         )
                     ),
+                    **_tracking_options_schema(user_input),
                     vol.Required(
                         CONF_SSL,
                         default=user_input.get(CONF_SSL),

@@ -72,8 +72,36 @@ Below are the configuration options for the Dawarich Home Assistant integration.
 - **Port:** port number for host
 - **Name:** integration entry category to contain devices
 - **Device Tracker:** device tracker to send data to Dawarich
+- **Minimum distance:** meters the tracker must have moved since the last point sent before a state change is forwarded. Filters out attribute-only updates (battery, wifi, GPS jitter). `0` disables it, which is the previous behavior.
+- **Heartbeat interval:** minutes between location pushes while the device is active, independent of state changes. `0` disables the heartbeat entirely.
+- **Drop to idle heartbeat after:** minutes without real movement before the heartbeat slows to its idle cadence.
+- **Idle heartbeat interval:** minutes between pushes once the device is considered stationary.
 - **Use SSL:** check to use HTTPS (i.e. prepends url with `https`)
 - **Verify SSL:** make sure secure connection is made through SSL
+
+### Why the heartbeat has two speeds
+
+Home Assistant device trackers only update on zone transitions or significant movement, so long stationary periods send nothing to Dawarich. Dawarich's visit detection reads that silence as a departure and return, splitting one continuous stay into several suggested visits.
+
+A constant heartbeat fixes that, but creates the opposite problem: Dawarich's track segmentation splits tracks purely on time gaps, and `Tracks::BoundaryDetector` re-merges any two tracks whose gap falls within `max(minutes_between_routes, 30 minutes)` and whose endpoints are within 5 km (hardcoded). A heartbeat that never leaves a gap means the track never ends — everything becomes one continuous track.
+
+The two cadences thread between those limits:
+
+| | |
+|---|---|
+| 30 min | Dawarich's track merge floor — gaps at or below this always merge |
+| **45 min** | **default idle heartbeat — above the floor, below the visit tolerance** |
+| 60 min | `stay_max_gap_minutes` — default longest gap still counted as one stay |
+
+An idle cadence in that window lets tracks split during stationary periods while keeping the visit intact. Because Dawarich only builds a track from segments of two or more points, isolated idle points don't produce spurious tracks of their own.
+
+When the device starts moving again, the integration re-sends the **last stationary position** immediately before the first moving point. That closes the visit at the actual moment of departure rather than at the last idle heartbeat, and makes the new journey start from where it really began.
+
+> [!NOTE]
+> If you raise the idle interval above your Dawarich server's `stay_max_gap_minutes` (default 60, adjustable via `PATCH /api/v1/settings` — there is no UI field for it), stays will start fragmenting again. Keep the idle interval between 30 and that value.
+
+### Service: `dawarich.push_location`
+Call this service against your Dawarich tracker sensor entity to push the current location on demand, for example from your own automation on a custom schedule.
 
 ## Known Issues
 Below are some known issues that are being looked at, but with workarounds for the moment.
