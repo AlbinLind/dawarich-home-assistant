@@ -18,10 +18,12 @@ from homeassistant.helpers import selector
 
 from .const import (
     CONF_DEVICE,
+    CONF_GPS_ACCURACY_THRESHOLD,
     CONF_HEARTBEAT_IDLE_AFTER,
     CONF_HEARTBEAT_IDLE_INTERVAL,
     CONF_HEARTBEAT_INTERVAL,
     CONF_MIN_DISTANCE,
+    DEFAULT_GPS_ACCURACY_THRESHOLD,
     DEFAULT_HEARTBEAT_IDLE_AFTER,
     DEFAULT_HEARTBEAT_IDLE_INTERVAL,
     DEFAULT_HEARTBEAT_INTERVAL,
@@ -45,6 +47,12 @@ def _tracking_options_schema(values: Mapping[str, Any]) -> dict:
             default=values.get(CONF_MIN_DISTANCE, DEFAULT_MIN_DISTANCE),
         ): vol.All(vol.Coerce(int), vol.Range(min=0)),
         vol.Optional(
+            CONF_GPS_ACCURACY_THRESHOLD,
+            default=values.get(
+                CONF_GPS_ACCURACY_THRESHOLD, DEFAULT_GPS_ACCURACY_THRESHOLD
+            ),
+        ): vol.All(vol.Coerce(int), vol.Range(min=0)),
+        vol.Optional(
             CONF_HEARTBEAT_INTERVAL,
             default=values.get(CONF_HEARTBEAT_INTERVAL, DEFAULT_HEARTBEAT_INTERVAL),
         ): vol.All(vol.Coerce(int), vol.Range(min=0)),
@@ -65,6 +73,9 @@ def _tracking_options_config(user_input: Mapping[str, Any]) -> dict:
     """Pull the tracker tuning options out of submitted form input."""
     return {
         CONF_MIN_DISTANCE: user_input.get(CONF_MIN_DISTANCE, DEFAULT_MIN_DISTANCE),
+        CONF_GPS_ACCURACY_THRESHOLD: user_input.get(
+            CONF_GPS_ACCURACY_THRESHOLD, DEFAULT_GPS_ACCURACY_THRESHOLD
+        ),
         CONF_HEARTBEAT_INTERVAL: user_input.get(
             CONF_HEARTBEAT_INTERVAL, DEFAULT_HEARTBEAT_INTERVAL
         ),

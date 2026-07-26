@@ -73,6 +73,7 @@ Below are the configuration options for the Dawarich Home Assistant integration.
 - **Name:** integration entry category to contain devices
 - **Device Tracker:** device tracker to send data to Dawarich
 - **Minimum distance:** meters the tracker must have moved since the last point sent before a state change is forwarded. Filters out attribute-only updates (battery, wifi, GPS jitter). Defaults to `100`, matching Dawarich's own `visit_radius_meters`. `0` disables it.
+- **GPS accuracy threshold:** meters of reported GPS accuracy above which a fix is discarded entirely — not sent and not counted as movement. Indoor GPS can drift 100–500+ m; without this filter those drifty fixes reset the heartbeat to its active cadence (preventing track splitting) and move the apparent position outside Dawarich's visit radius (fragmenting visits). Defaults to `200`. `0` disables the filter.
 - **Heartbeat interval:** minutes between location pushes while the device is active, independent of state changes. Defaults to `15`. `0` disables the heartbeat entirely.
 - **Drop to idle heartbeat after:** minutes without real movement before the heartbeat slows to its idle cadence. Defaults to `30`.
 - **Idle heartbeat interval:** minutes between pushes once the device is considered stationary. Defaults to `45`.

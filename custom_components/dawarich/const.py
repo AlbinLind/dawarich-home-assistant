@@ -29,6 +29,8 @@ CONF_HEARTBEAT_IDLE_AFTER = "heartbeat_idle_after"
 DEFAULT_HEARTBEAT_IDLE_AFTER = 30
 CONF_HEARTBEAT_IDLE_INTERVAL = "heartbeat_idle_interval"
 DEFAULT_HEARTBEAT_IDLE_INTERVAL = 45
+CONF_GPS_ACCURACY_THRESHOLD = "gps_accuracy_threshold"
+DEFAULT_GPS_ACCURACY_THRESHOLD = 200
 
 # Distance used to decide "the device actually moved" when no explicit
 # minimum distance is configured. Keeps GPS jitter from resetting the

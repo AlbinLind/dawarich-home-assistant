@@ -38,11 +38,13 @@ from custom_components.dawarich import DawarichConfigEntry
 
 from .const import (
     CONF_DEVICE,
+    CONF_GPS_ACCURACY_THRESHOLD,
     CONF_HEARTBEAT_IDLE_AFTER,
     CONF_HEARTBEAT_IDLE_INTERVAL,
     CONF_HEARTBEAT_INTERVAL,
     CONF_MIN_DISTANCE,
     DAWARICH_TRACK_MERGE_FLOOR_MINUTES,
+    DEFAULT_GPS_ACCURACY_THRESHOLD,
     DEFAULT_HEARTBEAT_IDLE_AFTER,
     DEFAULT_HEARTBEAT_IDLE_INTERVAL,
     DEFAULT_HEARTBEAT_INTERVAL,
@@ -180,6 +182,9 @@ async def async_setup_entry(
                     CONF_HEARTBEAT_IDLE_AFTER, DEFAULT_HEARTBEAT_IDLE_AFTER
                 ),
                 heartbeat_idle_interval=idle_interval,
+                gps_accuracy_threshold=entry.data.get(
+                    CONF_GPS_ACCURACY_THRESHOLD, DEFAULT_GPS_ACCURACY_THRESHOLD
+                ),
             )
         )
 
@@ -209,6 +214,7 @@ class DawarichTrackerSensor(SensorEntity):
         heartbeat_interval: int = 0,
         heartbeat_idle_after: int = 0,
         heartbeat_idle_interval: int = 0,
+        gps_accuracy_threshold: int = 0,
     ) -> None:
         """Initialize the sensor."""
         self._device_name = device_name
@@ -225,6 +231,7 @@ class DawarichTrackerSensor(SensorEntity):
         self._heartbeat_interval = heartbeat_interval
         self._heartbeat_idle_after = heartbeat_idle_after
         self._heartbeat_idle_interval = heartbeat_idle_interval
+        self._gps_accuracy_threshold = gps_accuracy_threshold
 
         # Distance that counts as the device having genuinely moved, as opposed
         # to GPS jitter or an attribute-only state change.
@@ -355,6 +362,10 @@ class DawarichTrackerSensor(SensorEntity):
             return
 
         new_data = new_state.attributes
+
+        if self._async_is_low_accuracy(new_data):
+            return
+
         coordinates = self._async_get_coordinates(new_data)
         if coordinates is None:
             return
@@ -446,6 +457,28 @@ class DawarichTrackerSensor(SensorEntity):
         return parsed or dt_util.utcnow()
 
     @callback
+    def _async_is_low_accuracy(self, new_data: dict) -> bool:
+        """Whether the GPS fix is too inaccurate to act on."""
+        if self._gps_accuracy_threshold <= 0:
+            return False
+        gps_accuracy = new_data.get("gps_accuracy")
+        if gps_accuracy is None:
+            return False
+        try:
+            accuracy = float(gps_accuracy)
+        except (TypeError, ValueError):
+            return False
+        if accuracy > self._gps_accuracy_threshold:
+            _LOGGER.debug(
+                "GPS accuracy for %s is %.0f m (threshold %s m), skipping",
+                self._mobile_app,
+                accuracy,
+                self._gps_accuracy_threshold,
+            )
+            return True
+        return False
+
+    @callback
     def _async_get_coordinates(self, new_data: dict) -> tuple[float, float] | None:
         """Extract coordinates from state attributes, warning if unusable."""
         _LOGGER.debug("Received data: %s", new_data)
@@ -501,6 +534,9 @@ class DawarichTrackerSensor(SensorEntity):
 
         state = self._hass.states.get(self._mobile_app)
         if not self._async_check_entity_availability(state) or state is None:
+            return
+
+        if self._async_is_low_accuracy(state.attributes):
             return
 
         _LOGGER.debug("Heartbeat triggered for %s, updating Dawarich", self._mobile_app)
