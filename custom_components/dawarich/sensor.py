@@ -200,7 +200,8 @@ class DawarichTrackerSensor(SensorEntity):
                     "Device tracker %s is not available. Please check the entity.",
                     self._mobile_app,
                 )
-                _LOGGER.debug("The state of the entity that is not available is %s.",
+                _LOGGER.debug(
+                    "The state of the entity that is not available is %s.",
                     state,
                 )
                 async_create_issue(
