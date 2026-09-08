@@ -4,10 +4,17 @@ import logging
 from datetime import UTC, datetime
 
 from dawarich_api import DawarichAPI
-from homeassistant.components.device_tracker.const import ATTR_SOURCE_TYPE, SourceType
+from homeassistant.components.device_tracker.const import (
+    ATTR_BATTERY,
+    ATTR_SOURCE_TYPE,
+    SourceType,
+)
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 from homeassistant.components.sensor.const import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
+    ATTR_GPS_ACCURACY,
+    ATTR_LATITUDE,
+    ATTR_LONGITUDE,
     CONF_HOST,
     CONF_NAME,
     UnitOfLength,
@@ -267,8 +274,8 @@ class DawarichTrackerSensor(SensorEntity):
         _LOGGER.debug("Received data: %s", new_data)
 
         # Get coordinates from new_data
-        latitude = new_data.get("latitude")
-        longitude = new_data.get("longitude")
+        latitude = new_data.get(ATTR_LATITUDE)
+        longitude = new_data.get(ATTR_LONGITUDE)
 
         # Check if the coordinates are present
         if latitude is None or longitude is None:
@@ -319,7 +326,7 @@ class DawarichTrackerSensor(SensorEntity):
         # Only include optional parameters if they have valid values
         optional_params = {}
 
-        if (gps_accuracy := new_data.get("gps_accuracy")) is not None:
+        if (gps_accuracy := new_data.get(ATTR_GPS_ACCURACY)) is not None:
             optional_params["horizontal_accuracy"] = gps_accuracy
 
         if (altitude := new_data.get("altitude")) is not None:
@@ -333,7 +340,7 @@ class DawarichTrackerSensor(SensorEntity):
         elif (velocity := new_data.get("velocity")) is not None:
             optional_params["speed"] = velocity
 
-        if (battery := new_data.get("battery")) is not None:
+        if (battery := new_data.get(ATTR_BATTERY)) is not None:
             optional_params["battery"] = battery
 
         if (raw_timestamp := new_data.get("last_seen")) is not None or (
