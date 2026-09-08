@@ -3,7 +3,7 @@
 import logging
 
 from dawarich_api import DawarichAPI
-from homeassistant.components.device_tracker.const import SourceType
+from homeassistant.components.device_tracker.const import ATTR_SOURCE_TYPE, SourceType
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 from homeassistant.components.sensor.const import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
@@ -271,7 +271,7 @@ class DawarichTrackerSensor(SensorEntity):
 
         # Check if the coordinates are present
         if latitude is None or longitude is None:
-            if new_data.get("source") != SourceType.GPS:
+            if new_data.get(ATTR_SOURCE_TYPE) != SourceType.GPS:
                 _LOGGER.warning(
                     (
                         "The choosen device tracker (%s) is emitting a '%s' "
@@ -279,7 +279,7 @@ class DawarichTrackerSensor(SensorEntity):
                         "Please change the device tracker to one that provides GPS coordinates."
                     ),
                     self._mobile_app,
-                    new_data.get("source"),
+                    new_data.get(ATTR_SOURCE_TYPE),
                 )
             _LOGGER.debug("Coordinates are not present, skipping update")
             return
