@@ -16,9 +16,6 @@
     - [Entity or Device not found in registry](#entity-or-device-not-found-in-registry)
 <!--toc:end-->
 ---
-> [!NOTE]
-> This is an experimental integration for Dawarich, expect possibly breaking changes. This is a community integration, not affiliated with Dawarich.
-
 
 [Dawarich](https://dawarich.app/) is a self-hosted Google Timeline alternative ([see](https://support.google.com/maps/answer/14169818?hl=en&co=GENIE.Platform%3DAndroid) why you would want to consider it).
 
