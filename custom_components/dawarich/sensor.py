@@ -1,7 +1,7 @@
 """Show statistical data from your Dawarich instance."""
 
-from datetime import UTC, datetime
 import logging
+from datetime import UTC, datetime
 
 from dawarich_api import DawarichAPI
 from homeassistant.components.device_tracker.const import SourceType
