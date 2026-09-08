@@ -16,11 +16,9 @@
     - [Entity or Device not found in registry](#entity-or-device-not-found-in-registry)
 <!--toc:end-->
 ---
-> [!NOTE]
-> This is an experimental integration for Dawarich, expect possibly breaking changes. This is a community integration, not affiliated with Dawarich.
-
 
 [Dawarich](https://dawarich.app/) is a self-hosted Google Timeline alternative ([see](https://support.google.com/maps/answer/14169818?hl=en&co=GENIE.Platform%3DAndroid) why you would want to consider it).
+In short it provide a private way to keep track of where you have been. You can either selfhost it, or use [Dawarich's own SaaS](https://dawarich.app/pricing/) platform!
 
 This integration does two things, one of which is optional.
 1. It provides statistics for your account. This includes total distance, number of cities visited, current Dawarich version, and more.
