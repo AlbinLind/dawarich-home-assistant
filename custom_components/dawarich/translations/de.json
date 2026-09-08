@@ -37,7 +37,8 @@
           "mobile_app": "Geräte Tracker",
           "ssl": "SSL gebrauchen (z.B. https)",
           "verify_ssl": "SSL verifizieren",
-          "api_key": "API Schlüssel (leer lassen um aktuellen zu behalten)"
+          "api_key": "API Schlüssel (leer lassen um aktuellen zu behalten)",
+          "min_distance": "Mindestentfernung vom letzten Punkt für ein erneutes Update (in Metern)"
         }
       }
     },

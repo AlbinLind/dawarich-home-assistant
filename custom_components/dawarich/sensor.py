@@ -26,10 +26,17 @@ from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
+from homeassistant.util.location import distance
 
 from custom_components.dawarich import DawarichConfigEntry
 
-from .const import CONF_DEVICE, DOMAIN, DawarichTrackerStates
+from .const import (
+    CONF_DEVICE,
+    CONF_MIN_DISTANCE,
+    DEFAULT_MIN_DISTANCE,
+    DOMAIN,
+    DawarichTrackerStates,
+)
 from .coordinator import DawarichStatsCoordinator, DawarichVersionCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -125,6 +132,7 @@ async def async_setup_entry(
 
     # Add (optional) mobile app tracker sensor
     mobile_app = entry.data[CONF_DEVICE]
+    min_distance_val = entry.data.get(CONF_MIN_DISTANCE, DEFAULT_MIN_DISTANCE)
     if mobile_app is not None:
         _LOGGER.info("Adding tracker sensor for %s", mobile_app)
         api = entry.runtime_data.api
@@ -137,6 +145,7 @@ async def async_setup_entry(
                 hass=hass,
                 device_info=device_info,
                 description=TRACKER_SENSOR_TYPES,
+                min_distance=min_distance_val,
             )
         )
     else:
@@ -157,6 +166,7 @@ class DawarichTrackerSensor(SensorEntity):
         hass: HomeAssistant,
         device_info: DeviceInfo,
         description: SensorEntityDescription,
+        min_distance: int,
     ) -> None:
         """Initialize the sensor."""
         self._device_name = device_name
@@ -168,6 +178,9 @@ class DawarichTrackerSensor(SensorEntity):
         self._attr_device_class = description.device_class
         self.entity_description = description
         self._repair_issue_created = False
+        self._min_distance = min_distance
+        self._last_lat: float | None = None
+        self._last_lon: float | None = None
 
         self._async_unsubscribe_state_changed = async_track_state_change_event(
             hass=self._hass,
@@ -284,6 +297,21 @@ class DawarichTrackerSensor(SensorEntity):
             _LOGGER.debug("Coordinates are not present, skipping update")
             return
 
+        # Check distance if min_distance is set
+        if (
+            self._min_distance > 0
+            and self._last_lat is not None
+            and self._last_lon is not None
+        ):
+            diff = distance(self._last_lat, self._last_lon, latitude, longitude)
+            if diff < self._min_distance:
+                _LOGGER.debug(
+                    "Distance change (%s) is less than minimum distance (%s), skipping update",
+                    diff,
+                    self._min_distance,
+                )
+                return
+
         optional_params = await self._async_add_optional_params(new_data)
 
         # Send to Dawarich API
@@ -296,6 +324,8 @@ class DawarichTrackerSensor(SensorEntity):
         if response.success:
             _LOGGER.debug("Location sent to Dawarich API")
             self._state = DawarichTrackerStates.SUCCESS
+            self._last_lat = latitude
+            self._last_lon = longitude
         else:
             self._state = DawarichTrackerStates.ERROR
             _LOGGER.error(

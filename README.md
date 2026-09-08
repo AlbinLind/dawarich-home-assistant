@@ -72,6 +72,7 @@ Below are the configuration options for the Dawarich Home Assistant integration.
 - **Port:** port number for host
 - **Name:** integration entry category to contain devices
 - **Device Tracker:** device tracker to send data to Dawarich
+- **Minimum distance change:** minimum distance in meters that must be changed before sending location to Dawarich
 - **Use SSL:** check to use HTTPS (i.e. prepends url with `https`)
 - **Verify SSL:** make sure secure connection is made through SSL
 
