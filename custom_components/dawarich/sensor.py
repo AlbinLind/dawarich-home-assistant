@@ -1,5 +1,6 @@
 """Show statistical data from your Dawarich instance."""
 
+from datetime import UTC, datetime
 import logging
 
 from dawarich_api import DawarichAPI
@@ -285,6 +286,16 @@ class DawarichTrackerSensor(SensorEntity):
             return
 
         optional_params = await self._async_add_optional_params(new_data)
+
+        # Dawarich API expects timestamp as an ISO-formatted string, but
+        # iCloud3, and possibly other device trackers, provide it as a Unix timestamp.
+        if (
+            "timestamp" in optional_params
+            and str(optional_params["timestamp"]).isnumeric()
+        ):
+            optional_params["timestamp"] = datetime.fromtimestamp(
+                int(optional_params["timestamp"]), tz=UTC
+            ).isoformat()
 
         # Send to Dawarich API
         response = await self._api.add_one_point(
