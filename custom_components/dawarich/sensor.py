@@ -107,12 +107,19 @@ async def async_setup_entry(
     # Use entry_id for stable identifiers (doesn't change when API key changes)
     entry_id = entry.entry_id
 
+    installed_version = (
+        entry.runtime_data.version_coordinator.data.get("installed_version")
+        if entry.runtime_data.version_coordinator.data
+        else None
+    )
+
     device_info = DeviceInfo(
         identifiers={(DOMAIN, entry_id)},
         name=name,
         manufacturer="Dawarich",
         configuration_url=entry.runtime_data.api.url,
         entry_type=DeviceEntryType.SERVICE,
+        sw_version=installed_version,
     )
 
     # Add statistics sensor

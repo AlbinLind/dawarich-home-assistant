@@ -25,7 +25,7 @@ from .helpers import get_api
 
 VERSION = json.loads((Path(__file__).parent / "manifest.json").read_text())["version"]
 
-PLATFORMS: list[Platform] = [Platform.SENSOR]
+PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.UPDATE]
 
 _LOGGER = logging.getLogger(__name__)
 
