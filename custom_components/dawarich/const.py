@@ -13,6 +13,7 @@ DEFAULT_VERIFY_SSL = True
 CONF_DEVICE = "mobile_app"
 UPDATE_INTERVAL = timedelta(seconds=60)
 VERSION_UPDATE_INTERVAL = timedelta(hours=1)
+GITHUB_RELEASE_URL = "https://api.github.com/repos/Freika/dawarich/releases/latest"
 
 
 class DawarichTrackerStates(Enum):
